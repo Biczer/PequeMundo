@@ -7,118 +7,194 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-  <title>Catálogo - Peque Mundo</title>
+  <title>Peque Mundo - Muebles Infantiles</title>
 </head>
 
 <body>
 
-  <main class="catalog-section">
-
-    <header class="catalog-header">
-      <button class="menu-button" type="button">☰</button>
-
-      <div class="menu-overlay" id="menuOverlay"></div>
-
+  <header class="home-header">
+    <a href="/" class="home-brand">
       <img 
         src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" 
         alt="Peque Mundo" 
-        class="catalog-logo" 
-      />
+        class="home-logo"
+      >
+    </a>
 
-      <div class="header-actions">
-        <a href="/login" aria-label="Ir al login">👤</a>
-        <span aria-label="Carrito de compras">🛒</span>
-      </div>
-    </header>
-
-    <div class="search-container">
-      <input type="text" placeholder="Buscar muebles..." />
-      <button type="button">🔍</button>
-    </div>
-
-    <nav class="category-list">
-      <button class="category active" type="button">Todos</button>
-      <button class="category" type="button">Cunas</button>
-      <button class="category" type="button">Camas</button>
-      <button class="category" type="button">Cómodas</button>
-      <button class="category" type="button">Escritorios</button>
-      <button class="category" type="button">Sillas</button>
+    <nav class="home-nav">
+      <a href="/">Inicio</a>
+      <a href="/catalogo">Catálogo</a>
+      <a href="#ofertas">Ofertas</a>
+      <a href="#nosotros">Nosotros</a>
     </nav>
 
-    <section class="product-grid">
+    <div class="home-actions">
+      <a href="/login" class="login-link">👤</a>
+      <a href="#" class="cart-link">🛒</a>
+    </div>
+  </header>
 
-      <article class="product-card">
-        <span class="badge">Nuevo</span>
+  <main>
+
+    <section class="hero-section">
+      <div class="hero-content">
+        <span class="hero-label">Muebles infantiles</span>
+
+        <h1>Diseña un espacio mágico, cómodo y seguro para los más pequeños</h1>
+
+        <p>
+          Encuentra cunas, camas, cómodas, escritorios y muebles pensados para acompañar
+          cada etapa del crecimiento de tus hijos.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="/catalogo" class="primary-button hero-button">Ver catálogo</a>
+          <a href="#ofertas" class="secondary-button">Ver ofertas</a>
+        </div>
+      </div>
+
+      <div class="hero-image">
         <img 
           src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Cuna Clásica" 
-        />
-        <h3>Cuna Clásica</h3>
-        <p class="price">$129.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
+          alt="Mueble infantil Peque Mundo"
+        >
+      </div>
+    </section>
 
-      <article class="product-card">
-        <span class="badge popular">Popular</span>
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Cama Montessori" 
-        />
-        <h3>Cama Montessori</h3>
-        <p class="price">$199.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
+    <section class="home-categories">
+      <div class="section-heading">
+        <span>Categorías</span>
+        <h2>Encuentra el mueble ideal</h2>
+        <p>Explora nuestras principales categorías de muebles infantiles.</p>
+      </div>
 
-      <article class="product-card">
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Cómoda 3 Cajones" 
-        />
-        <h3>Cómoda 3 Cajones</h3>
-        <p class="price">$99.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
+      <div class="category-cards">
+        <a href="/catalogo?categoria=cunas" class="home-category-card">
+          <span>🍼</span>
+          <h3>Cunas</h3>
+          <p>Seguras, cómodas y pensadas para el descanso.</p>
+        </a>
 
-      <article class="product-card">
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Escritorio Infantil" 
-        />
-        <h3>Escritorio Infantil</h3>
-        <p class="price">$89.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
+        <a href="/catalogo?categoria=camas" class="home-category-card">
+          <span>🛏️</span>
+          <h3>Camas</h3>
+          <p>Diseños infantiles funcionales y modernos.</p>
+        </a>
 
-      <article class="product-card">
-        <span class="badge offer">Oferta</span>
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Silla Infantil" 
-        />
-        <h3>Silla Infantil</h3>
-        <p class="price">$39.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
+        <a href="/catalogo?categoria=comodas" class="home-category-card">
+          <span>🧸</span>
+          <h3>Cómodas</h3>
+          <p>Organización práctica para ropa y accesorios.</p>
+        </a>
 
-      <article class="product-card">
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Clóset Infantil" 
-        />
-        <h3>Clóset Infantil</h3>
-        <p class="price">$149.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
+        <a href="/catalogo?categoria=escritorios" class="home-category-card">
+          <span>✏️</span>
+          <h3>Escritorios</h3>
+          <p>Espacios ideales para estudiar, crear y jugar.</p>
+        </a>
+      </div>
+    </section>
 
+    <section class="offers-section" id="ofertas">
+      <div class="section-heading">
+        <span>Destacados</span>
+        <h2>Ofertas y productos recomendados</h2>
+        <p>Una selección especial de muebles para renovar el dormitorio infantil.</p>
+      </div>
+
+      <div class="offer-grid">
+
+        <article class="product-card">
+          <span class="badge offer">Oferta</span>
+          <img 
+            src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
+            alt="Cuna Clásica"
+          >
+          <h3>Cuna Clásica</h3>
+          <p class="price">$129.990</p>
+          <p class="stock">● En stock</p>
+          <a href="/catalogo" class="product-link">Ver producto</a>
+        </article>
+
+        <article class="product-card">
+          <span class="badge popular">Popular</span>
+          <img 
+            src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
+            alt="Cama Montessori"
+          >
+          <h3>Cama Montessori</h3>
+          <p class="price">$199.990</p>
+          <p class="stock">● En stock</p>
+          <a href="/catalogo" class="product-link">Ver producto</a>
+        </article>
+
+        <article class="product-card">
+          <span class="badge">Nuevo</span>
+          <img 
+            src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
+            alt="Escritorio Infantil"
+          >
+          <h3>Escritorio Infantil</h3>
+          <p class="price">$89.990</p>
+          <p class="stock">● En stock</p>
+          <a href="/catalogo" class="product-link">Ver producto</a>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="about-section" id="nosotros">
+      <div class="about-content">
+        <span>Sobre nosotros</span>
+        <h2>Peque Mundo, muebles pensados para crecer junto a tu familia</h2>
+        <p>
+          En Peque Mundo nos enfocamos en ofrecer muebles infantiles funcionales,
+          seguros y con diseños cálidos para crear espacios cómodos, ordenados y llenos de estilo.
+        </p>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <span>🔒</span>
+          <h3>Compra segura</h3>
+          <p>Proceso de pago confiable mediante integración con Mercado Pago.</p>
+        </div>
+
+        <div class="benefit-card">
+          <span>🚚</span>
+          <h3>Despacho coordinado</h3>
+          <p>Integración con transporte externo para gestionar tus entregas.</p>
+        </div>
+
+        <div class="benefit-card">
+          <span>🪑</span>
+          <h3>Catálogo actualizado</h3>
+          <p>Productos sincronizados con el catálogo oficial de la empresa.</p>
+        </div>
+
+        <div class="benefit-card">
+          <span>💬</span>
+          <h3>Atención cercana</h3>
+          <p>Soporte y orientación para ayudarte a elegir el mueble correcto.</p>
+        </div>
+      </div>
     </section>
 
   </main>
+
+  <footer class="home-footer">
+    <div>
+      <h3>Peque Mundo</h3>
+      <p>Muebles infantiles para espacios únicos.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="/">Inicio</a>
+      <a href="/catalogo">Catálogo</a>
+      <a href="/login">Iniciar sesión</a>
+      <a href="/registro">Registrarse</a>
+    </div>
+  </footer>
 
 </body>
 </html>
