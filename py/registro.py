@@ -1,124 +1,52 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+registro_bp = Blueprint('registro', __name__)
 
-  <title>Catálogo - Peque Mundo</title>
-</head>
+# Simulación de base de datos de usuarios (reemplazar con BD real)
+USUARIOS = {}
 
-<body>
-href
-  <main class="catalog-section">
 
-    <header class="catalog-header">
-      <button class="menu-button" type="button">☰</button>
+@registro_bp.route('/registro', methods=['GET', 'POST'])
+def registro():
+    # Si ya está logueado, redirigir al catálogo
+    if 'usuario' in session:
+        return redirect(url_for('catalogo.catalogo'))
 
-      <div class="menu-overlay" id="menuOverlay"></div>
+    if request.method == 'POST':
+        nombre             = request.form.get('nombre', '').strip()
+        email              = request.form.get('email', '').strip().lower()
+        telefono           = request.form.get('telefono', '').strip()
+        password           = request.form.get('password', '')
+        confirmar_password = request.form.get('confirmar_password', '')
 
-      <img 
-        src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" 
-        alt="Peque Mundo" 
-        class="catalog-logo" 
-      />
+        # Validaciones
+        if not nombre or not email or not password:
+            flash('Por favor completa todos los campos obligatorios.')
+            return redirect(url_for('registro.registro'))
 
-      <div class="header-actions">
-        <a href="/login" aria-label="Ir al login">👤</a>
-        <a href="/carrito" aria-label="Carrito de compras">🛒</a>
-      </div>
-    </header>
+        if password != confirmar_password:
+            flash('Las contraseñas no coinciden.')
+            return redirect(url_for('registro.registro'))
 
-    <div class="search-container">
-      <input type="text" placeholder="Buscar muebles..." />
-      <button type="button">🔍</button>
-    </div>
+        if len(password) < 6:
+            flash('La contraseña debe tener al menos 6 caracteres.')
+            return redirect(url_for('registro.registro'))
 
-    <nav class="category-list">
-      <button class="category active" type="button">Todos</button>
-      <button class="category" type="button">Cunas</button>
-      <button class="category" type="button">Camas</button>
-      <button class="category" type="button">Cómodas</button>
-      <button class="category" type="button">Escritorios</button>
-      <button class="category" type="button">Sillas</button>
-    </nav>
+        if email in USUARIOS:
+            flash('Ya existe una cuenta con ese correo electrónico.')
+            return redirect(url_for('registro.registro'))
 
-    <section class="product-grid">
+        # Guardar usuario (reemplazar con INSERT a la BD)
+        USUARIOS[email] = {
+            'nombre':   nombre,
+            'password': password,   # ⚠️ En producción usar hashing: werkzeug.security.generate_password_hash
+            'telefono': telefono,
+        }
 
-      <article class="product-card">
-        <span class="badge">Nuevo</span>
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Cuna Clásica" 
-        />
-        <h3>Cuna Clásica</h3>
-        <p class="price">$129.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
+        # Iniciar sesión automáticamente tras el registro
+        session['usuario'] = email
+        session['nombre']  = nombre
 
-      <article class="product-card">
-        <span class="badge popular">Popular</span>
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Cama Montessori" 
-        />
-        <h3>Cama Montessori</h3>
-        <p class="price">$199.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
+        return redirect(url_for('catalogo.catalogo'))
 
-      <article class="product-card">
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Cómoda 3 Cajones" 
-        />
-        <h3>Cómoda 3 Cajones</h3>
-        <p class="price">$99.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
-
-      <article class="product-card">
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Escritorio Infantil" 
-        />
-        <h3>Escritorio Infantil</h3>
-        <p class="price">$89.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
-
-      <article class="product-card">
-        <span class="badge offer">Oferta</span>
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Silla Infantil" 
-        />
-        <h3>Silla Infantil</h3>
-        <p class="price">$39.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
-
-      <article class="product-card">
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Clóset Infantil" 
-        />
-        <h3>Clóset Infantil</h3>
-        <p class="price">$149.990</p>
-        <p class="stock">● En stock</p>
-        <button type="button">Agregar al carrito</button>
-      </article>
-
-    </section>
-
-  </main>
-
-</body>
-</html>
+    return render_template('registro.html')
