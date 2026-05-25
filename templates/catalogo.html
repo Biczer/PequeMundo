@@ -12,46 +12,59 @@
 
 <body>
 
-  <main class="catalog-section">
+  <header class="home-header">
+    <a href="/" class="home-brand">
+      <img
+        src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}"
+        alt="Peque Mundo"
+        class="home-logo"
+      >
+    </a>
 
-    <header class="catalog-header">
-      <button class="menu-button" type="button">☰</button>
+    <nav class="home-nav">
+      <a href="/">Inicio</a>
+      <a href="/catalogo">Catálogo</a>
+      <a href="/#ofertas">Ofertas</a>
+      <a href="/#nosotros">Nosotros</a>
+    </nav>
 
-      <div class="menu-overlay" id="menuOverlay"></div>
+    <div class="home-actions">
+      <a href="/login" aria-label="Ir al login">👤</a>
+      <a href="#" aria-label="Carrito de compras">🛒</a>
+    </div>
+  </header>
 
-      <img 
-        src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" 
-        alt="Peque Mundo" 
-        class="catalog-logo" 
-      />
+  <main class="catalog-main">
 
-      <div class="header-actions">
-        <a href="/login" aria-label="Ir al login">👤</a>
-        <span aria-label="Carrito de compras">🛒</span>
-      </div>
-    </header>
-
-    <div class="search-container">
-      <input type="text" placeholder="Buscar muebles..." />
-      <button type="button">🔍</button>
+    <div class="catalog-page-heading">
+      <span class="hero-label">Nuestros productos</span>
+      <h1>Catálogo completo</h1>
+      <p>Encuentra el mueble ideal para cada etapa del crecimiento de tus hijos.</p>
     </div>
 
-    <nav class="category-list">
-      <button class="category active" type="button">Todos</button>
-      <button class="category" type="button">Cunas</button>
-      <button class="category" type="button">Camas</button>
-      <button class="category" type="button">Cómodas</button>
-      <button class="category" type="button">Escritorios</button>
-      <button class="category" type="button">Sillas</button>
-    </nav>
+    <div class="catalog-toolbar">
+      <div class="search-container">
+        <input type="text" placeholder="Buscar muebles..." />
+        <button type="button">🔍</button>
+      </div>
+
+      <nav class="category-list">
+        <button class="category active" type="button">Todos</button>
+        <button class="category" type="button">Cunas</button>
+        <button class="category" type="button">Camas</button>
+        <button class="category" type="button">Cómodas</button>
+        <button class="category" type="button">Escritorios</button>
+        <button class="category" type="button">Sillas</button>
+      </nav>
+    </div>
 
     <section class="product-grid">
 
       <article class="product-card">
         <span class="badge">Nuevo</span>
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Cuna Clásica" 
+        <img
+          src="{{ url_for('static', filename='img/peque-mueble.webp') }}"
+          alt="Cuna Clásica"
         />
         <h3>Cuna Clásica</h3>
         <p class="price">$129.990</p>
@@ -61,9 +74,9 @@
 
       <article class="product-card">
         <span class="badge popular">Popular</span>
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Cama Montessori" 
+        <img
+          src="{{ url_for('static', filename='img/peque-mueble.webp') }}"
+          alt="Cama Montessori"
         />
         <h3>Cama Montessori</h3>
         <p class="price">$199.990</p>
@@ -72,9 +85,9 @@
       </article>
 
       <article class="product-card">
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Cómoda 3 Cajones" 
+        <img
+          src="{{ url_for('static', filename='img/peque-mueble.webp') }}"
+          alt="Cómoda 3 Cajones"
         />
         <h3>Cómoda 3 Cajones</h3>
         <p class="price">$99.990</p>
@@ -83,9 +96,9 @@
       </article>
 
       <article class="product-card">
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Escritorio Infantil" 
+        <img
+          src="{{ url_for('static', filename='img/peque-mueble.webp') }}"
+          alt="Escritorio Infantil"
         />
         <h3>Escritorio Infantil</h3>
         <p class="price">$89.990</p>
@@ -95,9 +108,9 @@
 
       <article class="product-card">
         <span class="badge offer">Oferta</span>
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Silla Infantil" 
+        <img
+          src="{{ url_for('static', filename='img/peque-mueble.webp') }}"
+          alt="Silla Infantil"
         />
         <h3>Silla Infantil</h3>
         <p class="price">$39.990</p>
@@ -106,9 +119,9 @@
       </article>
 
       <article class="product-card">
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Clóset Infantil" 
+        <img
+          src="{{ url_for('static', filename='img/peque-mueble.webp') }}"
+          alt="Clóset Infantil"
         />
         <h3>Clóset Infantil</h3>
         <p class="price">$149.990</p>
@@ -119,6 +132,20 @@
     </section>
 
   </main>
+
+  <footer class="home-footer">
+    <div>
+      <h3>Peque Mundo</h3>
+      <p>Muebles infantiles para espacios únicos.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="/">Inicio</a>
+      <a href="/catalogo">Catálogo</a>
+      <a href="/login">Iniciar sesión</a>
+      <a href="/registro">Registrarse</a>
+    </div>
+  </footer>
 
 </body>
 </html>
