@@ -9,42 +9,56 @@
 </head>
 <body>
 
-  <main class="catalog-section">
+  <header class="home-header">
+    <a href="{{ url_for('inicio') }}" class="home-brand">
+      <img src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" alt="Peque Mundo" class="home-logo">
+    </a>
 
-    <header class="catalog-header">
-      <a href="{{ url_for('inicio') }}" style="text-decoration:none;font-size:2rem;">←</a>
-      <img src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" alt="Peque Mundo" class="catalog-logo">
-      <div class="header-actions">
-        {% if session.get('usuario') %}
-          {% if session.get('rol') == 'Admin' %}
-            <a href="{{ url_for('dashboard') }}" title="Admin">⚙️</a>
-          {% endif %}
-          <a href="{{ url_for('cerrar_sesion') }}" title="Cerrar sesión">🔓</a>
-        {% else %}
-          <a href="{{ url_for('login') }}" title="Login">👤</a>
-        {% endif %}
-        <span title="Carrito">🛒</span>
-      </div>
-    </header>
-
-    <!-- Buscador -->
-    <div class="search-container">
-      <input type="text" id="buscador" placeholder="Buscar muebles..." oninput="filtrar()">
-      <button type="button" onclick="filtrar()">🔍</button>
-    </div>
-
-    <!-- Categorías -->
-    <nav class="category-list">
-      <button class="category active" type="button" onclick="setCat(this,'')">Todos</button>
-      <button class="category" type="button" onclick="setCat(this,'Cunas')">Cunas</button>
-      <button class="category" type="button" onclick="setCat(this,'Camas')">Camas</button>
-      <button class="category" type="button" onclick="setCat(this,'Cómodas')">Cómodas</button>
-      <button class="category" type="button" onclick="setCat(this,'Escritorios')">Escritorios</button>
-      <button class="category" type="button" onclick="setCat(this,'Sillas')">Sillas</button>
-      <button class="category" type="button" onclick="setCat(this,'Clósets')">Clósets</button>
+    <nav class="home-nav">
+      <a href="{{ url_for('inicio') }}">Inicio</a>
+      <a href="{{ url_for('catalogo') }}">Catálogo</a>
+      <a href="{{ url_for('inicio') }}#ofertas">Ofertas</a>
+      <a href="{{ url_for('inicio') }}#nosotros">Nosotros</a>
     </nav>
 
-    <!-- Grid de productos -->
+    <div class="home-actions">
+      {% if session.get('usuario') %}
+        {% if session.get('rol') == 'Admin' %}
+          <a href="{{ url_for('dashboard') }}" title="Admin" aria-label="Panel de administración">⚙️</a>
+        {% endif %}
+        <a href="{{ url_for('cerrar_sesion') }}" title="Cerrar sesión" aria-label="Cerrar sesión">🔓</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" aria-label="Iniciar sesión">👤</a>
+      {% endif %}
+      <a href="{{ url_for('carrito') }}" aria-label="Carrito de compras">🛒</a>
+    </div>
+  </header>
+
+  <main class="catalog-main">
+
+    <div class="catalog-page-heading">
+      <span class="hero-label">Muebles infantiles</span>
+      <h1>Nuestro Catálogo</h1>
+      <p>Encuentra el mueble perfecto para el espacio de tu hijo.</p>
+    </div>
+
+    <div class="catalog-toolbar">
+      <div class="search-container">
+        <input type="text" id="buscador" placeholder="Buscar muebles..." oninput="filtrar()">
+        <button type="button" onclick="filtrar()">🔍</button>
+      </div>
+
+      <nav class="category-list">
+        <button class="category active" type="button" onclick="setCat(this,'')">Todos</button>
+        <button class="category" type="button" onclick="setCat(this,'Cunas')">Cunas</button>
+        <button class="category" type="button" onclick="setCat(this,'Camas')">Camas</button>
+        <button class="category" type="button" onclick="setCat(this,'Cómodas')">Cómodas</button>
+        <button class="category" type="button" onclick="setCat(this,'Escritorios')">Escritorios</button>
+        <button class="category" type="button" onclick="setCat(this,'Sillas')">Sillas</button>
+        <button class="category" type="button" onclick="setCat(this,'Clósets')">Clósets</button>
+      </nav>
+    </div>
+
     {% set fallback_img = url_for('static', filename='img/peque-mueble.webp') %}
     <section class="product-grid" id="productGrid">
       {% for p in productos %}
@@ -54,22 +68,35 @@
         <img src="{{ url_for('static', filename='img/' ~ p.imagen) }}" alt="{{ p.nombre }}"
              onerror="this.src='{{ fallback_img }}'">
         <h3>{{ p.nombre }}</h3>
-        <p style="font-size:1.3rem;color:#6b7280;margin-bottom:0.8rem;">{{ p.descripcion[:60] }}{% if p.descripcion|length > 60 %}...{% endif %}</p>
+        <p class="card-desc">{{ p.descripcion[:60] }}{% if p.descripcion|length > 60 %}...{% endif %}</p>
         <p class="price">${{ "{:,.0f}".format(p.precio) }}</p>
         {% if p.stock > 0 %}
           <p class="stock">● En stock ({{ p.stock }} disponibles)</p>
           <button type="button">Agregar al carrito</button>
         {% else %}
-          <p style="color:#ef4444;font-size:1.3rem;margin-bottom:1.4rem;">● Agotado</p>
-          <button type="button" disabled style="opacity:0.5;cursor:not-allowed;">Sin stock</button>
+          <p class="out-of-stock">● Agotado</p>
+          <button type="button" disabled class="btn-disabled">Sin stock</button>
         {% endif %}
       </article>
       {% else %}
-      <p style="grid-column:1/-1;text-align:center;color:#6b7280;padding:3rem;">No hay productos disponibles en esta categoría.</p>
+      <p class="catalog-empty">No hay productos disponibles en esta categoría.</p>
       {% endfor %}
     </section>
 
   </main>
+
+  <footer class="home-footer">
+    <div>
+      <h3>Peque Mundo</h3>
+      <p>Muebles infantiles para espacios únicos.</p>
+    </div>
+    <div class="footer-links">
+      <a href="{{ url_for('inicio') }}">Inicio</a>
+      <a href="{{ url_for('catalogo') }}">Catálogo</a>
+      <a href="{{ url_for('historial') }}">Historial de pedidos</a>
+      <a href="{{ url_for('carrito') }}">Carrito</a>
+    </div>
+  </footer>
 
   <script>
     let catActual = '';
@@ -92,13 +119,6 @@
       });
     }
   </script>
-
-  <footer style="text-align:center;padding:2rem 1rem;margin-top:3rem;border-top:1px solid #e5e7eb;">
-    <a href="{{ url_for('historial') }}"
-       style="display:inline-block;padding:0.75rem 1.8rem;background:#4f46e5;color:#fff;border-radius:8px;text-decoration:none;font-size:1rem;font-weight:600;">
-      Ver historial de pedidos
-    </a>
-  </footer>
 
 </body>
 </html>

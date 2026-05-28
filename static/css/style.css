@@ -33,6 +33,7 @@ html {
   --color-hero-circle-end: #eef4ff;
   --color-label-bg: #eef4ff;
   --color-category-bg: #f3f4f6;
+  --color-danger: #ef4444;
 
   --font-base: Arial, Helvetica, sans-serif;
 
@@ -699,6 +700,32 @@ body {
   flex-direction: column;
   gap: 1.6rem;
   margin-bottom: 3.2rem;
+}
+
+.card-desc {
+  font-size: 1.3rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+.out-of-stock {
+  color: var(--color-danger);
+  font-size: 1.3rem;
+  margin-bottom: 1.4rem;
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.catalog-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 3rem;
+  font-size: 1.6rem;
 }
 
 @media (max-width: 110rem) {
