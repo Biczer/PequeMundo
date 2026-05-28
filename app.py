@@ -1,6 +1,13 @@
-from flask import Flask, render_template, request, redirect
+import os
+from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-pequemundo-2024')
+
+USUARIOS_DEMO = {
+    'admin@pequemundo.cl': {'password': 'admin123', 'nombre': 'Admin', 'rol': 'Admin'},
+    'cliente@test.cl':     {'password': 'cliente123', 'nombre': 'María González', 'rol': 'Cliente'},
+}
 
 
 @app.route("/")
@@ -13,13 +20,19 @@ def login():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
-
-        print("Correo login:", email)
-        print("Contraseña login:", password)
-
-        return redirect("/")
-
+        usuario = USUARIOS_DEMO.get(email)
+        if usuario and usuario["password"] == password:
+            session["usuario"] = usuario["nombre"]
+            session["rol"] = usuario["rol"]
+            return redirect("/dashboard" if usuario["rol"] == "Admin" else "/")
+        return render_template("login.html", error="Correo o contraseña incorrectos")
     return render_template("login.html")
+
+
+@app.route("/cerrar_sesion")
+def cerrar_sesion():
+    session.clear()
+    return redirect("/")
 
 
 @app.route("/registro", methods=["GET", "POST"])
@@ -40,6 +53,11 @@ def registro():
         return redirect("/login")
 
     return render_template("registro.html")
+
+
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
 
 
 @app.route("/catalogo")

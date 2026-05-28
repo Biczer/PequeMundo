@@ -29,8 +29,25 @@
     </nav>
 
     <div class="home-actions">
-      <a href="/login" aria-label="Ir al login">👤</a>
-      <a href="/carrito" aria-label="Carrito de compras">🛒</a>
+      {% if session.get('usuario') %}
+        <div class="nav-user-menu">
+          <button class="nav-btn {% if session.get('rol') == 'Admin' %}nav-btn--admin{% else %}nav-btn--user{% endif %}" onclick="toggleUserMenu()">
+            {% if session.get('rol') == 'Admin' %}Admin{% else %}{{ session.get('usuario') }}{% endif %}
+            <span class="nav-chevron">▾</span>
+          </button>
+          <div class="nav-dropdown" id="navDropdown">
+            {% if session.get('rol') == 'Admin' %}
+              <a href="{{ url_for('dashboard') }}" class="nav-dropdown-item">Panel admin</a>
+            {% else %}
+              <a href="{{ url_for('historial') }}" class="nav-dropdown-item">Mis pedidos</a>
+            {% endif %}
+            <a href="{{ url_for('cerrar_sesion') }}" class="nav-dropdown-item nav-dropdown-item--danger">Cerrar sesión</a>
+          </div>
+        </div>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="nav-btn nav-btn--login">Iniciar sesión</a>
+      {% endif %}
+      <a href="{{ url_for('carrito') }}" class="nav-cart" aria-label="Carrito de compras">🛒</a>
     </div>
   </header>
 
@@ -97,6 +114,19 @@
       <a href="/registro">Registrarse</a>
     </div>
   </footer>
+
+  <script>
+    function toggleUserMenu() {
+      document.getElementById('navDropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      const menu = document.querySelector('.nav-user-menu');
+      if (menu && !menu.contains(e.target)) {
+        const d = document.getElementById('navDropdown');
+        if (d) d.classList.remove('open');
+      }
+    });
+  </script>
 
 </body>
 </html>
