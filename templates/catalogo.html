@@ -54,9 +54,11 @@
 
     <div class="catalog-toolbar">
       <div class="search-container">
-        <input type="text" id="buscador" placeholder="Buscar muebles..." oninput="filtrar()">
+        <input type="text" id="buscador" placeholder="Buscar por nombre, categoría o descripción..." oninput="filtrar()" autocomplete="off">
+        <button type="button" id="btnLimpiar" onclick="limpiarBusqueda()" title="Limpiar búsqueda" style="display:none">✕</button>
         <button type="button" onclick="filtrar()">🔍</button>
       </div>
+      <p id="resultadosInfo" class="search-results-info" style="display:none"></p>
 
       <nav class="category-list">
         <button class="category active" type="button" onclick="setCat(this,'')">Todos</button>
@@ -108,10 +110,23 @@
       return n.toLocaleString('es-CL');
     }
 
-    function renderProductos(lista) {
+    function escaparHTML(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function resaltar(texto, palabras) {
+      if (!palabras.length) return escaparHTML(texto);
+      const regex = new RegExp(
+        '(' + palabras.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')',
+        'gi'
+      );
+      return escaparHTML(texto).replace(regex, '<mark>$1</mark>');
+    }
+
+    function renderProductos(lista, palabras = []) {
       const grid = document.getElementById('productGrid');
       if (!lista.length) {
-        grid.innerHTML = '<p class="catalog-empty">No hay productos disponibles en esta categoría.</p>';
+        grid.innerHTML = '<p class="catalog-empty">No se encontraron productos para esa búsqueda.</p>';
         return;
       }
       grid.innerHTML = lista.map((p, i) => {
@@ -126,15 +141,15 @@
              <button type="button">Agregar al carrito</button>`
           : `<p class="out-of-stock">● Agotado</p>
              <button type="button" disabled class="btn-disabled">Sin stock</button>`;
-        const desc = p.descripcion.length > 60
+        const descCorta = p.descripcion.length > 60
           ? p.descripcion.slice(0, 60) + '...'
           : p.descripcion;
         return `
-          <article class="product-card" data-nombre="${p.nombre.toLowerCase()}" data-cat="${p.categoria}">
+          <article class="product-card" data-nombre="${escaparHTML(p.nombre.toLowerCase())}" data-cat="${escaparHTML(p.categoria)}">
             ${badge}
-            <img src="${imgSrc}" alt="${p.nombre}" onerror="this.src='${FALLBACK_IMG}'">
-            <h3>${p.nombre}</h3>
-            <p class="card-desc">${desc}</p>
+            <img src="${imgSrc}" alt="${escaparHTML(p.nombre)}" onerror="this.src='${FALLBACK_IMG}'">
+            <h3>${resaltar(p.nombre, palabras)}</h3>
+            <p class="card-desc">${resaltar(descCorta, palabras)}</p>
             <p class="price">$${formatPrecio(p.precio)}</p>
             ${stockHtml}
           </article>`;
@@ -142,13 +157,39 @@
     }
 
     function filtrar() {
-      const texto = document.getElementById('buscador').value.toLowerCase();
+      const input = document.getElementById('buscador').value.toLowerCase().trim();
+      const palabras = input ? input.split(/\s+/).filter(Boolean) : [];
+
+      document.getElementById('btnLimpiar').style.display = input ? '' : 'none';
+
       const filtrados = todosLosProductos.filter(p => {
-        const matchTexto = p.nombre.toLowerCase().includes(texto);
         const matchCat = !catActual || p.categoria === catActual;
-        return matchTexto && matchCat;
+        if (!matchCat) return false;
+        if (!palabras.length) return true;
+        return palabras.every(palabra =>
+          p.nombre.toLowerCase().includes(palabra) ||
+          p.descripcion.toLowerCase().includes(palabra) ||
+          p.categoria.toLowerCase().includes(palabra)
+        );
       });
-      renderProductos(filtrados);
+
+      const info = document.getElementById('resultadosInfo');
+      if (palabras.length) {
+        info.style.display = '';
+        info.textContent = filtrados.length === 1
+          ? '1 producto encontrado'
+          : `${filtrados.length} productos encontrados`;
+      } else {
+        info.style.display = 'none';
+      }
+
+      renderProductos(filtrados, palabras);
+    }
+
+    function limpiarBusqueda() {
+      document.getElementById('buscador').value = '';
+      filtrar();
+      document.getElementById('buscador').focus();
     }
 
     function setCat(btn, cat) {
