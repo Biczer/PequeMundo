@@ -4,140 +4,175 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
   <title>Carrito - Peque Mundo</title>
 </head>
 
 <body>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <a href="/catalogo">
+  <header class="home-header">
+    <a href="/" class="home-brand">
       <img
         src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}"
         alt="Peque Mundo"
-        class="navbar-logo"
-      />
+        class="home-logo"
+      >
     </a>
-    <nav class="navbar-actions">
-      <a href="/catalogo" class="nav-link">Catálogo</a>
-      <a href="/historial" class="nav-link">Mis pedidos</a>
-      <a href="/logout" class="nav-link">Cerrar sesión</a>
+
+    <nav class="home-nav">
+      <a href="/">Inicio</a>
+      <a href="/catalogo">Catálogo</a>
+      <a href="/#ofertas">Ofertas</a>
+      <a href="/#nosotros">Nosotros</a>
     </nav>
+
+    <div class="home-actions">
+      <a href="/login" aria-label="Ir al login">👤</a>
+      <a href="/carrito" aria-label="Carrito de compras">🛒</a>
+    </div>
   </header>
 
-  <main class="carrito-layout">
+  <main class="catalog-main">
 
-    <!-- COLUMNA IZQUIERDA: productos -->
-    <section class="carrito-items-section">
+    <div class="catalog-page-heading">
+      <span class="hero-label">Mi compra</span>
+      <h1>Carrito de compras</h1>
+      <p>Revisa los productos que seleccionaste antes de pagar.</p>
+    </div>
 
-      <div class="section-header">
-        <h1>Tu carrito</h1>
-        <span class="item-count">{{ items|length }} producto(s)</span>
-      </div>
-
-      {% if items %}
-
-        <div class="carrito-lista">
-          {% for item in items %}
-          <div class="carrito-item">
-
-            <img
-              src="{{ url_for('static', filename='img/' + item.imagen) }}"
-              alt="{{ item.nombre }}"
-              class="item-img"
-            />
-
-            <div class="item-info">
-              <h3>{{ item.nombre }}</h3>
-              <p class="item-precio">${{ "{:,.0f}".format(item.precio) }}</p>
-            </div>
-
-            <div class="item-cantidad">
-              <a href="/carrito/disminuir/{{ item.id }}" class="qty-btn">−</a>
-              <span>{{ item.cantidad }}</span>
-              <a href="/carrito/aumentar/{{ item.id }}" class="qty-btn">+</a>
-            </div>
-
-            <p class="item-subtotal">${{ "{:,.0f}".format(item.precio * item.cantidad) }}</p>
-
-            <a href="/carrito/eliminar/{{ item.id }}" class="eliminar-btn" title="Eliminar">✕</a>
-
-          </div>
-          {% endfor %}
-        </div>
-
-        <a href="/carrito/vaciar" class="vaciar-link">Vaciar carrito</a>
-
-      {% else %}
-
-        <div class="carrito-vacio">
-          <p class="vacio-emoji">🛒</p>
-          <p class="vacio-texto">Tu carrito está vacío</p>
-          <a href="/catalogo" class="primary-button vacio-btn">Ver productos</a>
-        </div>
-
-      {% endif %}
-
-    </section>
-
-    <!-- COLUMNA DERECHA: resumen -->
     {% if items %}
-    <aside class="carrito-resumen">
 
-      <h2>Resumen del pedido</h2>
+      <div class="cart-layout">
 
-      <div class="resumen-linea">
-        <span>Subtotal</span>
-        <span>${{ "{:,.0f}".format(subtotal) }}</span>
+        <section class="cart-products">
+
+          <div class="history-table-wrapper">
+            <table class="history-table cart-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Valor unitario</th>
+                  <th>Cantidad</th>
+                  <th>Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in items %}
+                <tr>
+                  <td class="cart-product-cell">
+                    <img
+                      src="{{ url_for('static', filename='img/' + item.imagen) }}"
+                      alt="{{ item.nombre }}"
+                      class="cart-product-img"
+                    >
+                    <span class="cart-product-name">{{ item.nombre }}</span>
+                  </td>
+                  <td class="history-monto">${{ "{:,.0f}".format(item.precio) }}</td>
+                  <td>
+                    <div class="cart-qty">
+                      <a href="/carrito/disminuir/{{ item.id }}" class="cart-qty-btn">−</a>
+                      <span class="cart-qty-num">{{ item.cantidad }}</span>
+                      <a href="/carrito/aumentar/{{ item.id }}" class="cart-qty-btn">+</a>
+                    </div>
+                  </td>
+                  <td class="history-monto">${{ "{:,.0f}".format(item.precio * item.cantidad) }}</td>
+                  <td>
+                    <a href="/carrito/eliminar/{{ item.id }}" class="cart-remove-btn" title="Eliminar producto">✕</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="cart-actions-bar">
+            <a href="/catalogo" class="secondary-button">← Seguir comprando</a>
+            <a href="/carrito/vaciar" class="cart-clear-btn">Eliminar todos los productos</a>
+          </div>
+
+        </section>
+
+        <aside class="cart-summary">
+
+          <h2 class="cart-summary-title">Resumen del pedido</h2>
+
+          <div class="cart-summary-row">
+            <span>Subtotal</span>
+            <span>${{ "{:,.0f}".format(subtotal) }}</span>
+          </div>
+
+          <div class="cart-summary-divider"></div>
+
+          <p class="cart-delivery-label">Tipo de entrega</p>
+
+          <div class="cart-delivery-options">
+            <label class="cart-delivery-option">
+              <input type="radio" name="entrega" value="domicilio_rm"
+                {% if entrega == 'domicilio_rm' %}checked{% endif %}
+                onchange="window.location='/carrito/entrega/domicilio_rm'">
+              <span>Despacho Región Metropolitana</span>
+              <span class="cart-delivery-price">${{ "{:,.0f}".format(costo_rm) }}</span>
+            </label>
+
+            <label class="cart-delivery-option">
+              <input type="radio" name="entrega" value="domicilio_region"
+                {% if entrega == 'domicilio_region' %}checked{% endif %}
+                onchange="window.location='/carrito/entrega/domicilio_region'">
+              <span>Despacho otras regiones</span>
+              <span class="cart-delivery-price">${{ "{:,.0f}".format(costo_region) }}</span>
+            </label>
+
+            <label class="cart-delivery-option">
+              <input type="radio" name="entrega" value="retiro"
+                {% if entrega == 'retiro' %}checked{% endif %}
+                onchange="window.location='/carrito/entrega/retiro'">
+              <span>Retiro en tienda</span>
+              <span class="cart-delivery-price cart-delivery-free">Gratis</span>
+            </label>
+          </div>
+
+          <div class="cart-summary-divider"></div>
+
+          <div class="cart-summary-row cart-summary-total">
+            <span>Total</span>
+            <span>${{ "{:,.0f}".format(total) }}</span>
+          </div>
+
+          <a href="/checkout" class="primary-button cart-checkout-btn">Ir a pagar →</a>
+
+        </aside>
+
       </div>
 
-      <!-- DESPACHO -->
-      <div class="resumen-despacho">
-        <p class="despacho-label">Tipo de entrega</p>
+    {% else %}
 
-        <label class="opcion-entrega">
-          <input type="radio" name="entrega" value="domicilio_rm" id="rm"
-            {% if entrega == 'domicilio_rm' %}checked{% endif %}
-            onchange="window.location='/carrito/entrega/domicilio_rm'"/>
-          <span>Despacho Región Metropolitana</span>
-          <span class="precio-entrega">${{ "{:,.0f}".format(costo_rm) }}</span>
-        </label>
-
-        <label class="opcion-entrega">
-          <input type="radio" name="entrega" value="domicilio_region" id="region"
-            {% if entrega == 'domicilio_region' %}checked{% endif %}
-            onchange="window.location='/carrito/entrega/domicilio_region'"/>
-          <span>Despacho otras regiones</span>
-          <span class="precio-entrega">${{ "{:,.0f}".format(costo_region) }}</span>
-        </label>
-
-        <label class="opcion-entrega">
-          <input type="radio" name="entrega" value="retiro" id="retiro"
-            {% if entrega == 'retiro' %}checked{% endif %}
-            onchange="window.location='/carrito/entrega/retiro'"/>
-          <span>Retiro en tienda</span>
-          <span class="precio-entrega gratis">Gratis</span>
-        </label>
+      <div class="orders-empty">
+        <span class="orders-empty-icon">🛒</span>
+        <h2>Tu carrito está vacío</h2>
+        <p>Agrega productos desde el catálogo para comenzar tu compra.</p>
+        <a href="/catalogo" class="primary-button orders-empty-btn">Ver catálogo</a>
       </div>
 
-      <div class="resumen-linea total">
-        <span>Total</span>
-        <span>${{ "{:,.0f}".format(total) }}</span>
-      </div>
-
-      <a href="/checkout" class="primary-button checkout-btn">
-        Ir a pagar →
-      </a>
-
-      <a href="/catalogo" class="seguir-link">← Seguir comprando</a>
-
-    </aside>
     {% endif %}
 
   </main>
+
+  <footer class="home-footer">
+    <div>
+      <h3>Peque Mundo</h3>
+      <p>Muebles infantiles para espacios únicos.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="/">Inicio</a>
+      <a href="/catalogo">Catálogo</a>
+      <a href="/login">Iniciar sesión</a>
+      <a href="/registro">Registrarse</a>
+    </div>
+  </footer>
 
 </body>
 </html>

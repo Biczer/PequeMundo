@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <title>Historial de compras - Peque Mundo</title>
+</head>
+
+<body>
+
+  <header class="home-header">
+    <a href="/" class="home-brand">
+      <img
+        src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}"
+        alt="Peque Mundo"
+        class="home-logo"
+      >
+    </a>
+
+    <nav class="home-nav">
+      <a href="/">Inicio</a>
+      <a href="/catalogo">Catálogo</a>
+      <a href="/#ofertas">Ofertas</a>
+      <a href="/#nosotros">Nosotros</a>
+    </nav>
+
+    <div class="home-actions">
+      <a href="/login" aria-label="Ir al login">👤</a>
+      <a href="/carrito" aria-label="Carrito de compras">🛒</a>
+    </div>
+  </header>
+
+  <main class="catalog-main">
+
+    <div class="catalog-page-heading">
+      <span class="hero-label">Mi cuenta</span>
+      <h1>Historial de compras</h1>
+      <p>Revisa el detalle de todos tus pedidos realizados.</p>
+    </div>
+
+    {% if pedidos %}
+
+      <div class="history-table-wrapper">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>ID Compra</th>
+              <th>Fecha</th>
+              <th>ID Transacción</th>
+              <th>Monto</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for pedido in pedidos %}
+            <tr>
+              <td class="history-id">#{{ pedido.id }}</td>
+              <td>{{ pedido.fecha }}</td>
+              <td class="history-txn">{{ pedido.id_transaccion }}</td>
+              <td class="history-monto">${{ pedido.total }}</td>
+              <td>
+                <a href="/pedido/{{ pedido.id }}" class="history-detail-btn">Ver detalle</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    {% else %}
+
+      <div class="orders-empty">
+        <span class="orders-empty-icon">🛍️</span>
+        <h2>Aún no tienes compras</h2>
+        <p>Cuando realices un pedido, aparecerá aquí con todos sus detalles.</p>
+        <a href="/catalogo" class="primary-button orders-empty-btn">Ir al catálogo</a>
+      </div>
+
+    {% endif %}
+
+  </main>
+
+  <footer class="home-footer">
+    <div>
+      <h3>Peque Mundo</h3>
+      <p>Muebles infantiles para espacios únicos.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="/">Inicio</a>
+      <a href="/catalogo">Catálogo</a>
+      <a href="/login">Iniciar sesión</a>
+      <a href="/registro">Registrarse</a>
+    </div>
+  </footer>
+
+</body>
+</html>
