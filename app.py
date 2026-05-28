@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, request, redirect, session
+import json
+from flask import Flask, render_template, request, redirect, session, jsonify
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-pequemundo-2024')
@@ -63,6 +64,17 @@ def dashboard():
 @app.route("/catalogo")
 def catalogo():
     return render_template("catalogo.html")
+
+
+@app.route("/api/productos")
+def api_productos():
+    ruta = os.path.join(os.path.dirname(__file__), "data", "productos.json")
+    with open(ruta, encoding="utf-8") as f:
+        productos = json.load(f)
+    categoria = request.args.get("categoria", "")
+    if categoria:
+        productos = [p for p in productos if p["categoria"] == categoria]
+    return jsonify(productos)
 
 @app.route("/carrito")
 def carrito():

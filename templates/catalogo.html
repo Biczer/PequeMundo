@@ -69,28 +69,8 @@
       </nav>
     </div>
 
-    {% set fallback_img = url_for('static', filename='img/peque-mueble.webp') %}
     <section class="product-grid" id="productGrid">
-      {% for p in productos %}
-      <article class="product-card" data-nombre="{{ p.nombre|lower }}" data-cat="{{ p.categoria }}">
-        {% if loop.index == 1 %}<span class="badge">Nuevo</span>{% endif %}
-        {% if loop.index == 2 %}<span class="badge popular">Popular</span>{% endif %}
-        <img src="{{ url_for('static', filename='img/' ~ p.imagen) }}" alt="{{ p.nombre }}"
-             onerror="this.src='{{ fallback_img }}'">
-        <h3>{{ p.nombre }}</h3>
-        <p class="card-desc">{{ p.descripcion[:60] }}{% if p.descripcion|length > 60 %}...{% endif %}</p>
-        <p class="price">${{ "{:,.0f}".format(p.precio) }}</p>
-        {% if p.stock > 0 %}
-          <p class="stock">● En stock ({{ p.stock }} disponibles)</p>
-          <button type="button">Agregar al carrito</button>
-        {% else %}
-          <p class="out-of-stock">● Agotado</p>
-          <button type="button" disabled class="btn-disabled">Sin stock</button>
-        {% endif %}
-      </article>
-      {% else %}
-      <p class="catalog-empty">No hay productos disponibles en esta categoría.</p>
-      {% endfor %}
+      <p class="catalog-empty" id="loadingMsg">Cargando productos...</p>
     </section>
 
   </main>
@@ -120,7 +100,56 @@
       }
     });
 
+    const FALLBACK_IMG = "{{ url_for('static', filename='img/peque-mueble.webp') }}";
+    let todosLosProductos = [];
     let catActual = '';
+
+    function formatPrecio(n) {
+      return n.toLocaleString('es-CL');
+    }
+
+    function renderProductos(lista) {
+      const grid = document.getElementById('productGrid');
+      if (!lista.length) {
+        grid.innerHTML = '<p class="catalog-empty">No hay productos disponibles en esta categoría.</p>';
+        return;
+      }
+      grid.innerHTML = lista.map((p, i) => {
+        const imgSrc = "{{ url_for('static', filename='img/') }}" + p.imagen;
+        const badge = i === 0
+          ? '<span class="badge">Nuevo</span>'
+          : i === 1
+            ? '<span class="badge popular">Popular</span>'
+            : '';
+        const stockHtml = p.stock > 0
+          ? `<p class="stock">● En stock (${p.stock} disponibles)</p>
+             <button type="button">Agregar al carrito</button>`
+          : `<p class="out-of-stock">● Agotado</p>
+             <button type="button" disabled class="btn-disabled">Sin stock</button>`;
+        const desc = p.descripcion.length > 60
+          ? p.descripcion.slice(0, 60) + '...'
+          : p.descripcion;
+        return `
+          <article class="product-card" data-nombre="${p.nombre.toLowerCase()}" data-cat="${p.categoria}">
+            ${badge}
+            <img src="${imgSrc}" alt="${p.nombre}" onerror="this.src='${FALLBACK_IMG}'">
+            <h3>${p.nombre}</h3>
+            <p class="card-desc">${desc}</p>
+            <p class="price">$${formatPrecio(p.precio)}</p>
+            ${stockHtml}
+          </article>`;
+      }).join('');
+    }
+
+    function filtrar() {
+      const texto = document.getElementById('buscador').value.toLowerCase();
+      const filtrados = todosLosProductos.filter(p => {
+        const matchTexto = p.nombre.toLowerCase().includes(texto);
+        const matchCat = !catActual || p.categoria === catActual;
+        return matchTexto && matchCat;
+      });
+      renderProductos(filtrados);
+    }
 
     function setCat(btn, cat) {
       catActual = cat;
@@ -129,16 +158,18 @@
       filtrar();
     }
 
-    function filtrar() {
-      const texto = document.getElementById('buscador').value.toLowerCase();
-      document.querySelectorAll('.product-card').forEach(card => {
-        const nombre = card.dataset.nombre || '';
-        const cat = card.dataset.cat || '';
-        const matchTexto = nombre.includes(texto);
-        const matchCat = !catActual || cat === catActual;
-        card.style.display = matchTexto && matchCat ? '' : 'none';
-      });
+    async function cargarProductos() {
+      try {
+        const res = await fetch('/api/productos');
+        todosLosProductos = await res.json();
+        filtrar();
+      } catch (e) {
+        document.getElementById('productGrid').innerHTML =
+          '<p class="catalog-empty">Error al cargar los productos.</p>';
+      }
     }
+
+    cargarProductos();
   </script>
 
 </body>
