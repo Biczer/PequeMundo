@@ -71,7 +71,9 @@
       </nav>
     </div>
 
-    <section class="product-grid" id="productGrid">
+    <section class="product-grid" id="productGrid"
+      data-img-base="{{ url_for('static', filename='img/') }}"
+      data-fallback-img="{{ url_for('static', filename='img/peque-mueble.webp') }}">
       <p class="catalog-empty" id="loadingMsg">Cargando productos...</p>
     </section>
 
@@ -90,128 +92,9 @@
     </div>
   </footer>
 
-  <script>
-    function toggleUserMenu() {
-      document.getElementById('navDropdown').classList.toggle('open');
-    }
-    document.addEventListener('click', function(e) {
-      const menu = document.querySelector('.nav-user-menu');
-      if (menu && !menu.contains(e.target)) {
-        const d = document.getElementById('navDropdown');
-        if (d) d.classList.remove('open');
-      }
-    });
-
-    const FALLBACK_IMG = "{{ url_for('static', filename='img/peque-mueble.webp') }}";
-    let todosLosProductos = [];
-    let catActual = '';
-
-    function formatPrecio(n) {
-      return n.toLocaleString('es-CL');
-    }
-
-    function escaparHTML(str) {
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    function resaltar(texto, palabras) {
-      if (!palabras.length) return escaparHTML(texto);
-      const regex = new RegExp(
-        '(' + palabras.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')',
-        'gi'
-      );
-      return escaparHTML(texto).replace(regex, '<mark>$1</mark>');
-    }
-
-    function renderProductos(lista, palabras = []) {
-      const grid = document.getElementById('productGrid');
-      if (!lista.length) {
-        grid.innerHTML = '<p class="catalog-empty">No se encontraron productos para esa búsqueda.</p>';
-        return;
-      }
-      grid.innerHTML = lista.map((p, i) => {
-        const imgSrc = "{{ url_for('static', filename='img/') }}" + p.imagen;
-        const badge = i === 0
-          ? '<span class="badge">Nuevo</span>'
-          : i === 1
-            ? '<span class="badge popular">Popular</span>'
-            : '';
-        const stockHtml = p.stock > 0
-          ? `<p class="stock">● En stock (${p.stock} disponibles)</p>
-             <button type="button">Agregar al carrito</button>`
-          : `<p class="out-of-stock">● Agotado</p>
-             <button type="button" disabled class="btn-disabled">Sin stock</button>`;
-        const descCorta = p.descripcion.length > 60
-          ? p.descripcion.slice(0, 60) + '...'
-          : p.descripcion;
-        return `
-          <article class="product-card" data-nombre="${escaparHTML(p.nombre.toLowerCase())}" data-cat="${escaparHTML(p.categoria)}">
-            ${badge}
-            <img src="${imgSrc}" alt="${escaparHTML(p.nombre)}" onerror="this.src='${FALLBACK_IMG}'">
-            <h3>${resaltar(p.nombre, palabras)}</h3>
-            <p class="card-desc">${resaltar(descCorta, palabras)}</p>
-            <p class="price">$${formatPrecio(p.precio)}</p>
-            ${stockHtml}
-          </article>`;
-      }).join('');
-    }
-
-    function filtrar() {
-      const input = document.getElementById('buscador').value.toLowerCase().trim();
-      const palabras = input ? input.split(/\s+/).filter(Boolean) : [];
-
-      document.getElementById('btnLimpiar').style.display = input ? '' : 'none';
-
-      const filtrados = todosLosProductos.filter(p => {
-        const matchCat = !catActual || p.categoria === catActual;
-        if (!matchCat) return false;
-        if (!palabras.length) return true;
-        return palabras.every(palabra =>
-          p.nombre.toLowerCase().includes(palabra) ||
-          p.descripcion.toLowerCase().includes(palabra) ||
-          p.categoria.toLowerCase().includes(palabra)
-        );
-      });
-
-      const info = document.getElementById('resultadosInfo');
-      if (palabras.length) {
-        info.style.display = '';
-        info.textContent = filtrados.length === 1
-          ? '1 producto encontrado'
-          : `${filtrados.length} productos encontrados`;
-      } else {
-        info.style.display = 'none';
-      }
-
-      renderProductos(filtrados, palabras);
-    }
-
-    function limpiarBusqueda() {
-      document.getElementById('buscador').value = '';
-      filtrar();
-      document.getElementById('buscador').focus();
-    }
-
-    function setCat(btn, cat) {
-      catActual = cat;
-      document.querySelectorAll('.category').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      filtrar();
-    }
-
-    async function cargarProductos() {
-      try {
-        const res = await fetch('/api/productos');
-        todosLosProductos = await res.json();
-        filtrar();
-      } catch (e) {
-        document.getElementById('productGrid').innerHTML =
-          '<p class="catalog-empty">Error al cargar los productos.</p>';
-      }
-    }
-
-    cargarProductos();
-  </script>
+  <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/catalogo.js') }}"></script>
 
 </body>
 </html>
