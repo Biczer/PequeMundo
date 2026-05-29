@@ -33,11 +33,14 @@ function renderProductos(lista, palabras = []) {
     return `
       <article class="product-card" data-nombre="${escaparHTML(p.nombre.toLowerCase())}" data-cat="${escaparHTML(p.categoria)}">
         ${badge}
-        <img src="${imgSrc}" alt="${escaparHTML(p.nombre)}" onerror="this.src='${FALLBACK_IMG}'">
-        <h3>${resaltar(p.nombre, palabras)}</h3>
+        <a href="/producto/${p.id}" class="product-card__img-link">
+          <img src="${imgSrc}" alt="${escaparHTML(p.nombre)}" onerror="this.src='${FALLBACK_IMG}'">
+        </a>
+        <h3><a href="/producto/${p.id}" class="product-card__title-link">${resaltar(p.nombre, palabras)}</a></h3>
         <p class="card-desc">${resaltar(descCorta, palabras)}</p>
         <p class="price">$${formatPrecio(p.precio)}</p>
         ${stockHtml}
+        <a href="/producto/${p.id}" class="product-card__detail-link">Ver producto →</a>
       </article>`;
   }).join('');
 }

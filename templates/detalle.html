@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <title>Detalle de producto - Peque Mundo</title>
+</head>
+<body>
+
+  <header class="home-header">
+    <a href="{{ url_for('inicio') }}" class="home-brand">
+      <img src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" alt="Peque Mundo" class="home-logo">
+    </a>
+
+    <nav class="home-nav">
+      <a href="{{ url_for('inicio') }}">Inicio</a>
+      <a href="{{ url_for('catalogo') }}">Catálogo</a>
+      <a href="{{ url_for('inicio') }}#ofertas">Ofertas</a>
+      <a href="{{ url_for('inicio') }}#nosotros">Nosotros</a>
+    </nav>
+
+    <div class="home-actions">
+      {% if session.get('usuario') %}
+        <div class="nav-user-menu">
+          <button class="nav-btn {% if session.get('rol') == 'Admin' %}nav-btn--admin{% else %}nav-btn--user{% endif %}" onclick="toggleUserMenu()">
+            {% if session.get('rol') == 'Admin' %}Admin{% else %}{{ session.get('usuario') }}{% endif %}
+            <span class="nav-chevron">▾</span>
+          </button>
+          <div class="nav-dropdown" id="navDropdown">
+            {% if session.get('rol') == 'Admin' %}
+              <a href="{{ url_for('dashboard') }}" class="nav-dropdown-item">Panel admin</a>
+            {% else %}
+              <a href="{{ url_for('historial') }}" class="nav-dropdown-item">Mis pedidos</a>
+            {% endif %}
+            <a href="{{ url_for('cerrar_sesion') }}" class="nav-dropdown-item nav-dropdown-item--danger">Cerrar sesión</a>
+          </div>
+        </div>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="nav-btn nav-btn--login">Iniciar sesión</a>
+      {% endif %}
+      <a href="{{ url_for('carrito') }}" class="nav-cart" aria-label="Carrito de compras">🛒</a>
+    </div>
+  </header>
+
+  <main class="detail-main">
+
+    <nav class="detail-breadcrumb">
+      <a href="{{ url_for('inicio') }}">Inicio</a>
+      <span>›</span>
+      <a href="{{ url_for('catalogo') }}">Catálogo</a>
+      <span>›</span>
+      <span id="breadcrumbNombre">Cargando...</span>
+    </nav>
+
+    <div class="detail-layout"
+      id="detailRoot"
+      data-img-base="{{ url_for('static', filename='img/') }}"
+      data-fallback-img="{{ url_for('static', filename='img/peque-mueble.webp') }}">
+
+      <!-- Galería -->
+      <div class="detail-gallery">
+        <img id="mainImg" class="detail-gallery__main" src="" alt="">
+        <div class="detail-gallery__thumbs">
+          <img class="detail-thumb" onclick="seleccionarThumb(0)" src="" alt="">
+          <img class="detail-thumb" onclick="seleccionarThumb(1)" src="" alt="">
+          <img class="detail-thumb" onclick="seleccionarThumb(2)" src="" alt="">
+          <img class="detail-thumb" onclick="seleccionarThumb(3)" src="" alt="">
+        </div>
+      </div>
+
+      <!-- Información -->
+      <div class="detail-info">
+        <span class="detail-info__badge" id="detailCategoria"></span>
+        <h1 class="detail-info__name" id="detailNombre"></h1>
+        <p class="detail-info__price" id="detailPrecio"></p>
+        <p id="detailStock"></p>
+
+        <div class="detail-divider"></div>
+
+        <p class="detail-info__desc" id="detailDesc"></p>
+
+        <div class="detail-specs">
+          <div class="detail-spec-item">
+            <p class="detail-spec-label">Categoría</p>
+            <p class="detail-spec-value" id="specCategoria"></p>
+          </div>
+          <div class="detail-spec-item">
+            <p class="detail-spec-label">Disponibilidad</p>
+            <p class="detail-spec-value" id="specStock"></p>
+          </div>
+          <div class="detail-spec-item">
+            <p class="detail-spec-label">Precio unitario</p>
+            <p class="detail-spec-value" id="specPrecio"></p>
+          </div>
+          <div class="detail-spec-item">
+            <p class="detail-spec-label">Código</p>
+            <p class="detail-spec-value" id="specId"></p>
+          </div>
+        </div>
+
+        <div class="detail-qty-row">
+          <span class="detail-qty-label">Cantidad</span>
+          <div class="detail-qty-ctrl">
+            <button class="detail-qty-btn" type="button" onclick="cambiarCantidad(-1)">−</button>
+            <span class="detail-qty-num" id="cantidadNum">1</span>
+            <button class="detail-qty-btn" type="button" onclick="cambiarCantidad(1)">+</button>
+          </div>
+        </div>
+
+        <button id="btnAgregarCarrito" class="detail-add-btn primary-button" type="button" onclick="abrirModal()">
+          Agregar al carrito
+        </button>
+        <a href="{{ url_for('catalogo') }}" class="detail-back-link">← Volver al catálogo</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal de confirmación -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 class="modal-title" id="modalTitle">¿Agregar al carrito?</h2>
+
+      <div class="modal-product">
+        <img class="modal-product-img" id="modalImg" src="" alt="">
+        <div>
+          <p class="modal-product-name" id="modalNombre"></p>
+          <p class="modal-product-price" id="modalPrecio"></p>
+        </div>
+      </div>
+
+      <div class="modal-detail-row">
+        <span>Cantidad</span>
+        <span id="modalQty">1</span>
+      </div>
+      <div class="modal-total-row">
+        <span>Total</span>
+        <span class="modal-total-price" id="modalTotal"></span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn-cancel" type="button" onclick="cerrarModal()">Cancelar</button>
+        <button class="modal-btn-confirm primary-button" type="button" onclick="confirmarCarrito()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="home-footer">
+    <div>
+      <h3>Peque Mundo</h3>
+      <p>Muebles infantiles para espacios únicos.</p>
+    </div>
+    <div class="footer-links">
+      <a href="{{ url_for('inicio') }}">Inicio</a>
+      <a href="{{ url_for('catalogo') }}">Catálogo</a>
+      <a href="{{ url_for('historial') }}">Historial de pedidos</a>
+      <a href="{{ url_for('carrito') }}">Carrito</a>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/detalle.js') }}"></script>
+
+</body>
+</html>

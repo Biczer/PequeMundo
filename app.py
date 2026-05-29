@@ -66,6 +66,11 @@ def catalogo():
     return render_template("catalogo.html")
 
 
+@app.route("/producto/<int:id>")
+def detalle_producto(id):
+    return render_template("detalle.html")
+
+
 @app.route("/api/productos")
 def api_productos():
     ruta = os.path.join(os.path.dirname(__file__), "data", "productos.json")
@@ -75,6 +80,17 @@ def api_productos():
     if categoria:
         productos = [p for p in productos if p["categoria"] == categoria]
     return jsonify(productos)
+
+
+@app.route("/api/productos/<int:id>")
+def api_producto(id):
+    ruta = os.path.join(os.path.dirname(__file__), "data", "productos.json")
+    with open(ruta, encoding="utf-8") as f:
+        productos = json.load(f)
+    producto = next((p for p in productos if p["id"] == id), None)
+    if producto is None:
+        return jsonify({"error": "Producto no encontrado"}), 404
+    return jsonify(producto)
 
 @app.route("/carrito")
 def carrito():
