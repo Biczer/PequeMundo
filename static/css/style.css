@@ -200,6 +200,84 @@ body {
   text-decoration: none;
 }
 
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  padding-right: 4.8rem;
+  width: 100%;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: var(--color-primary);
+}
+
+.field-error {
+  color: #e53e3e;
+  font-size: 1.2rem;
+  display: none;
+}
+
+.field-error.visible {
+  display: block;
+}
+
+.form-group input.input-error {
+  border-color: #e53e3e;
+}
+
+.demo-credentials {
+  margin-top: 2.4rem;
+  padding: 1.6rem;
+  background: #fffbeb;
+  border: 0.1rem dashed #f6ad55;
+  border-radius: var(--radius-md);
+}
+
+.demo-credentials__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #b7791f;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.demo-credentials__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.3rem;
+}
+
+.demo-credentials__table th {
+  text-align: left;
+  color: #92400e;
+  font-weight: 700;
+  padding: 0.4rem 0.8rem;
+  border-bottom: 0.1rem solid #f6ad55;
+}
+
+.demo-credentials__table td {
+  padding: 0.5rem 0.8rem;
+  color: #78350f;
+}
+
 .catalog-section {
   background: var(--color-white);
   border-radius: var(--radius-xl);
