@@ -11,6 +11,11 @@ USUARIOS_DEMO = {
 }
 
 
+ESTADOS_VALIDOS = ["Pendiente", "Enviado", "Entregado"]
+TRANSICIONES    = {"Pendiente": "Enviado", "Enviado": "Entregado", "Entregado": None}
+API_KEY         = "dev-api-key-pequemundo"
+
+
 @app.route("/")
 def inicio():
     return render_template("index.html")
@@ -110,33 +115,15 @@ def carrito():
     )
 
 
+def leer_pedidos():
+    ruta = os.path.join(os.path.dirname(__file__), "data", "pedidos.json")
+    with open(ruta, encoding="utf-8") as f:
+        return json.load(f)
+
 @app.route("/historial")
 def historial():
-    pedidos = [
-        {
-            "id": 1042,
-            "fecha": "24 mayo 2026",
-            "estado": "entregado",
-            "id_transaccion": "TXN-8A3F2C1D",
-            "total": "329.980",
-            "items": [
-                {"nombre": "Cuna Clásica", "cantidad": 1, "precio": "129.990", "imagen": "peque-mueble.webp"},
-                {"nombre": "Cómoda 3 Cajones", "cantidad": 2, "precio": "199.980", "imagen": "peque-mueble.webp"},
-            ]
-        },
-        {
-            "id": 1041,
-            "fecha": "10 mayo 2026",
-            "estado": "pendiente",
-            "id_transaccion": "TXN-5E9B4A7C",
-            "total": "89.990",
-            "items": [
-                {"nombre": "Escritorio Infantil", "cantidad": 1, "precio": "89.990", "imagen": "peque-mueble.webp"},
-            ]
-        },
-    ]
+    pedidos = leer_pedidos()
     return render_template("historial.html", pedidos=pedidos)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
