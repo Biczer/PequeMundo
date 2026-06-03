@@ -112,11 +112,14 @@ def requiere_cliente(f):
 # UTILIDAD MP
 # =========================
 def crear_preferencia_mp(items_list, cliente_nombre, cliente_email, pedido_id):
+    # Usar host_url del request activo para construir back_urls con host+puerto correctos
+    base = request.host_url.rstrip('/')
+
     mp_items = [{
         "id": str(i['id']),
         "title": i['nombre'],
         "quantity": int(i['cantidad']),
-        "unit_price": float(i['precio']),
+        "unit_price": int(i['precio']),   # CLP requiere entero
         "currency_id": "CLP"
     } for i in items_list]
 
@@ -127,13 +130,16 @@ def crear_preferencia_mp(items_list, cliente_nombre, cliente_email, pedido_id):
             "email": cliente_email or "test_user@test.com"
         },
         "back_urls": {
-            "success": url_for('mp_success', _external=True),
-            "failure": url_for('mp_failure', _external=True),
-            "pending": url_for('mp_pending', _external=True),
+            "success": f"{base}/mp/success",
+            "failure": f"{base}/mp/failure",
+            "pending": f"{base}/mp/pending",
         },
-        "auto_return": "approved",
         "external_reference": str(pedido_id),
     }
+    # auto_return solo funciona con HTTPS; en localhost se omite para evitar invalid_auto_return
+    if base.startswith('https://'):
+        preference_data["auto_return"] = "approved"
+
     response = sdk.preference().create(preference_data)
     return response.get("response", {})
 
@@ -310,6 +316,253 @@ def mis_pedidos():
     usuario = Usuario.query.get(session['usuario_id'])
     pedidos = Pedido.query.filter_by(cliente_email=usuario.email).order_by(Pedido.id.desc()).all()
     return render_template('mis_pedidos.html', pedidos=pedidos)
+
+
+# =========================
+# CARRITO POR SESIÓN (flujo tradicional)
+# =========================
+COSTO_RM     = 9990
+COSTO_REGION = 14990
+
+def _costos(entrega):
+    mapa = {'domicilio_rm': COSTO_RM, 'domicilio_region': COSTO_REGION, 'retiro': 0}
+    return mapa.get(entrega, COSTO_RM)
+
+@app.route('/carrito')
+def carrito():
+    items   = session.get('carrito', [])
+    entrega = session.get('entrega', 'domicilio_rm')
+    subtotal = sum(i['precio'] * i['cantidad'] for i in items)
+    total    = subtotal + _costos(entrega)
+    return render_template('carrito.html', items=items, subtotal=subtotal, total=total,
+                           entrega=entrega, costo_rm=COSTO_RM, costo_region=COSTO_REGION)
+
+@app.route('/carrito/agregar/<int:id>')
+def agregar_al_carrito(id):
+    p = Producto.query.filter_by(id=id, estado='Activo').first()
+    if not p:
+        return redirect(url_for('catalogo'))
+    items = session.get('carrito', [])
+    for item in items:
+        if item['id'] == id:
+            if item['cantidad'] < p.stock:
+                item['cantidad'] += 1
+            break
+    else:
+        items.append({'id': p.id, 'nombre': p.nombre, 'precio': int(p.precio),
+                      'cantidad': 1, 'imagen': p.imagen})
+    session['carrito'] = items
+    session.modified = True
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'ok': True})
+    return redirect(url_for('carrito'))
+
+@app.route('/carrito/aumentar/<int:id>')
+def aumentar_cantidad(id):
+    items = session.get('carrito', [])
+    for item in items:
+        if item['id'] == id:
+            item['cantidad'] += 1
+            break
+    session['carrito'] = items
+    session.modified = True
+    return redirect(url_for('carrito'))
+
+@app.route('/carrito/disminuir/<int:id>')
+def disminuir_cantidad(id):
+    items = session.get('carrito', [])
+    for item in items:
+        if item['id'] == id:
+            if item['cantidad'] > 1:
+                item['cantidad'] -= 1
+            else:
+                items.remove(item)
+            break
+    session['carrito'] = items
+    session.modified = True
+    return redirect(url_for('carrito'))
+
+@app.route('/carrito/eliminar/<int:id>')
+def eliminar_del_carrito(id):
+    session['carrito'] = [i for i in session.get('carrito', []) if i['id'] != id]
+    session.modified = True
+    return redirect(url_for('carrito'))
+
+@app.route('/carrito/vaciar')
+def vaciar_carrito():
+    session['carrito'] = []
+    session.modified = True
+    return redirect(url_for('carrito'))
+
+@app.route('/carrito/entrega/<tipo>')
+def cambiar_entrega(tipo):
+    if tipo in ('domicilio_rm', 'domicilio_region', 'retiro'):
+        session['entrega'] = tipo
+        session.modified = True
+    return redirect(url_for('carrito'))
+
+
+# =========================
+# CHECKOUT
+# =========================
+@app.route('/checkout', methods=['GET', 'POST'])
+def checkout():
+    items = session.get('carrito', [])
+    if not items:
+        return redirect(url_for('carrito'))
+    entrega  = session.get('entrega', 'domicilio_rm')
+    subtotal = sum(i['precio'] * i['cantidad'] for i in items)
+    envio    = _costos(entrega)
+    total    = subtotal + envio
+    if request.method == 'POST':
+        session['datos_envio'] = {
+            'nombre':   request.form.get('nombre', ''),
+            'email':    request.form.get('email', ''),
+            'telefono': request.form.get('telefono', ''),
+            'calle':    request.form.get('calle', ''),
+            'depto':    request.form.get('depto', ''),
+            'comuna':   request.form.get('comuna', ''),
+            'region':   request.form.get('region', ''),
+        }
+        session.modified = True
+        return redirect(url_for('pago'))
+    return render_template('checkout.html', items=items, subtotal=subtotal,
+                           envio=envio, total=total, entrega=entrega,
+                           usuario=session.get('usuario', ''))
+
+
+# =========================
+# PAGO (flujo de sesión)
+# =========================
+@app.route('/pago')
+def pago():
+    items = session.get('carrito', [])
+    if not items:
+        return redirect(url_for('carrito'))
+    entrega  = session.get('entrega', 'domicilio_rm')
+    subtotal = sum(i['precio'] * i['cantidad'] for i in items)
+    envio    = _costos(entrega)
+    total    = subtotal + envio
+    return render_template('pago_form.html', items=items, subtotal=subtotal,
+                           envio=envio, total=total, entrega=entrega)
+
+
+@app.route('/pago/procesar', methods=['POST'])
+def pago_procesar():
+    items = session.get('carrito', [])
+    if not items:
+        return redirect(url_for('carrito'))
+    entrega  = session.get('entrega', 'domicilio_rm')
+    subtotal = sum(i['precio'] * i['cantidad'] for i in items)
+    envio    = _costos(entrega)
+    total    = subtotal + envio
+
+    nombre  = request.form.get('nombre_tarjeta', '').strip()
+    numero  = request.form.get('numero_tarjeta', '').replace(' ', '')
+    expira  = request.form.get('expiracion', '').strip()
+    cvv     = request.form.get('cvv', '').strip()
+
+    errores = {}
+    if not nombre:
+        errores['nombre_tarjeta'] = 'Ingresa el nombre.'
+    if len(numero) != 16 or not numero.isdigit():
+        errores['numero_tarjeta'] = 'Ingresa los 16 dígitos.'
+    if not expira:
+        errores['expiracion'] = 'Ingresa la fecha.'
+    if len(cvv) < 3:
+        errores['cvv'] = 'CVV inválido.'
+
+    if errores:
+        return render_template('pago_form.html', items=items, subtotal=subtotal,
+                               envio=envio, total=total, entrega=entrega,
+                               errores=errores, form=request.form)
+
+    try:
+        cliente_nombre = session.get('usuario', nombre)
+        cliente_email  = session.get('datos_envio', {}).get('email', '')
+        nuevo_pedido = Pedido(
+            cliente=cliente_nombre,
+            cliente_email=cliente_email,
+            total=total,
+            estado='Pagado',
+            vendedor_id=None,
+            mp_status='approved',
+            items_json=json.dumps(items)
+        )
+        db.session.add(nuevo_pedido)
+        for item in items:
+            p = Producto.query.get(item['id'])
+            if p:
+                p.stock = max(0, p.stock - item['cantidad'])
+                if p.stock == 0:
+                    p.estado = 'Agotado'
+        db.session.commit()
+        session['mp_id_orden'] = nuevo_pedido.id
+        session['carrito'] = []
+        session.modified = True
+        pedido_data = {
+            'id_orden': nuevo_pedido.id,
+            'fecha_orden': 'Ahora',
+            'total': total,
+            'estado': 'Pagado',
+            'codigo_transaccion': f'SIM-{nuevo_pedido.id:06d}',
+            'items': [{'nombre': i['nombre'], 'cantidad': i['cantidad'],
+                       'precio_unitario': i['precio'], 'subtotal': i['precio'] * i['cantidad']}
+                      for i in items]
+        }
+        return render_template('confirmacion.html', pedido=pedido_data, payment_status='approved')
+    except Exception as e:
+        return render_template('pago_error.html', error=str(e)), 500
+
+
+# =========================
+# HISTORIAL Y DETALLE PEDIDO
+# =========================
+@app.route('/historial')
+def historial():
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+    usuario_id = session.get('usuario_id')
+    if session.get('rol') == 'Admin':
+        pedidos = Pedido.query.order_by(Pedido.id.desc()).all()
+    else:
+        usuario = Usuario.query.get(usuario_id)
+        pedidos = Pedido.query.filter_by(
+            cliente_email=usuario.email if usuario else ''
+        ).order_by(Pedido.id.desc()).all()
+    filas = [{'id_orden': p.id, 'fecha_orden': '—', 'total': p.total,
+               'estado': p.estado, 'codigo_transaccion': p.mp_payment_id or '—'}
+             for p in pedidos]
+    return render_template('historial.html', pedidos=filas)
+
+
+@app.route('/pedido/<int:id>')
+def detalle_pedido(id):
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+    pedido = Pedido.query.get_or_404(id)
+    items_raw = []
+    if pedido.items_json:
+        try:
+            raw = json.loads(pedido.items_json)
+            items_raw = [{'nombre': i.get('nombre', ''), 'cantidad': i.get('cantidad', 1),
+                          'precio_unitario': i.get('precio', 0),
+                          'subtotal': i.get('precio', 0) * i.get('cantidad', 1)} for i in raw]
+        except Exception:
+            pass
+    pedido_data = {
+        'id_orden': pedido.id,
+        'fecha_orden': '—',
+        'total': pedido.total,
+        'precio_envio': 0,
+        'estado': pedido.estado,
+        'estado_pago': pedido.mp_status or '—',
+        'codigo_transaccion': pedido.mp_payment_id or '—',
+        'tipo_entrega': 'domicilio_rm',
+        'cliente': pedido.cliente,
+        'items': items_raw,
+    }
+    return render_template('detalle_pedido.html', pedido=pedido_data)
 
 
 # =========================

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <title>Pago pendiente - Peque Mundo</title>
+</head>
+<body>
+  <header class="home-header">
+    <a href="{{ url_for('inicio') }}" class="home-brand">
+      <img src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" alt="Peque Mundo" class="home-logo">
+    </a>
+  </header>
+  <main class="catalog-main">
+    <div class="orders-empty" style="padding:3rem 1rem;">
+      <span class="orders-empty-icon">⏳</span>
+      <h1>Pago en proceso</h1>
+      <p>Tu pago está siendo revisado. Te notificaremos cuando se confirme.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;">
+        <a href="{{ url_for('historial') }}" class="primary-button">Ver mis pedidos</a>
+        <a href="{{ url_for('inicio') }}" class="secondary-button">Ir al inicio</a>
+      </div>
+    </div>
+  </main>
+  <footer class="home-footer">
+    <div><h3>Peque Mundo</h3><p>Muebles infantiles para espacios únicos.</p></div>
+  </footer>
+</body>
+</html>
