@@ -56,13 +56,13 @@
         </table>
       </div>
 
-      {% if pedido.items %}
+      {% if pedido.lineas %}
       <h2 style="margin:2rem 0 1rem;">Productos</h2>
       <div class="history-table-wrapper">
         <table class="history-table">
           <thead><tr><th>Producto</th><th>Cant.</th><th>Total</th></tr></thead>
           <tbody>
-            {% for item in pedido.items %}
+            {% for item in pedido.lineas %}
             <tr>
               <td>{{ item.nombre }}</td>
               <td>{{ item.cantidad }}</td>

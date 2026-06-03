@@ -506,9 +506,9 @@ def pago_procesar():
             'total': total,
             'estado': 'Pagado',
             'codigo_transaccion': f'SIM-{nuevo_pedido.id:06d}',
-            'items': [{'nombre': i['nombre'], 'cantidad': i['cantidad'],
-                       'precio_unitario': i['precio'], 'subtotal': i['precio'] * i['cantidad']}
-                      for i in items]
+            'lineas': [{'nombre': i['nombre'], 'cantidad': i['cantidad'],
+                        'precio_unitario': i['precio'], 'subtotal': i['precio'] * i['cantidad']}
+                       for i in items]
         }
         return render_template('confirmacion.html', pedido=pedido_data, payment_status='approved')
     except Exception as e:
@@ -560,7 +560,7 @@ def detalle_pedido(id):
         'codigo_transaccion': pedido.mp_payment_id or '—',
         'tipo_entrega': 'domicilio_rm',
         'cliente': pedido.cliente,
-        'items': items_raw,
+        'lineas': items_raw,
     }
     return render_template('detalle_pedido.html', pedido=pedido_data)
 
