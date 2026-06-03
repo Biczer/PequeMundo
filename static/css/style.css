@@ -961,6 +961,45 @@ mark {
 
 
 
+/* ── Flash messages ── */
+.flash {
+  padding: 1rem 1.4rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 0.6rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.flash-danger  { background: #fee2e2; color: #991b1b; }
+.flash-success { background: #dcfce7; color: #166534; }
+.flash-info,
+.flash-warning { background: #dbeafe; color: #1e40af; }
+
+/* ── Catálogo: hero banner ── */
+.catalog-hero {
+  padding: 13rem 4rem 4rem;
+  background: linear-gradient(180deg, var(--color-hero-bg-start), var(--color-bg));
+  text-align: center;
+}
+.catalog-hero-inner {
+  max-width: 68rem;
+  margin: 0 auto;
+}
+.catalog-hero-inner h1 {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+.catalog-hero-inner p {
+  font-size: 1.7rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+@media (max-width: 60rem) {
+  .catalog-hero { padding: 11rem 2rem 3rem; }
+  .catalog-hero-inner h1 { font-size: 2.8rem; }
+}
+
 .history-table-wrapper {
   overflow-x: auto;
   border-radius: var(--radius-xl);

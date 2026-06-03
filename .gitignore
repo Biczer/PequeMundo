@@ -1,6 +1,23 @@
+# Credenciales y entorno
 .env
+.env.*
+
+# Entorno virtual
 .venv/
+venv/
+env/
+
+# Python
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+
+# Base de datos local
 instance/
+*.db
+*.sqlite3
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

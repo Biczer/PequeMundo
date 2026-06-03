@@ -3,197 +3,148 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
   <title>Peque Mundo - Muebles Infantiles</title>
 </head>
-
 <body>
 
   <header class="home-header">
-    <a href="/" class="home-brand">
-      <img 
-        src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" 
-        alt="Peque Mundo" 
-        class="home-logo"
-      >
+    <a href="{{ url_for('inicio') }}" class="home-brand">
+      <img src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" alt="Peque Mundo" class="home-logo">
     </a>
-
     <nav class="home-nav">
-      <a href="/">Inicio</a>
-      <a href="/catalogo">Catálogo</a>
+      <a href="{{ url_for('inicio') }}">Inicio</a>
+      <a href="{{ url_for('catalogo') }}">Catálogo</a>
       <a href="#ofertas">Ofertas</a>
       <a href="#nosotros">Nosotros</a>
     </nav>
-
     <div class="home-actions">
       {% if session.get('usuario') %}
-        <div class="nav-user-menu">
-          <button class="nav-btn {% if session.get('rol') == 'Admin' %}nav-btn--admin{% else %}nav-btn--user{% endif %}" onclick="toggleUserMenu()">
-            {% if session.get('rol') == 'Admin' %}Admin{% else %}{{ session.get('usuario') }}{% endif %}
-            <span class="nav-chevron">▾</span>
-          </button>
-          <div class="nav-dropdown" id="navDropdown">
-            {% if session.get('rol') == 'Admin' %}
-              <a href="{{ url_for('dashboard') }}" class="nav-dropdown-item">Panel admin</a>
-            {% else %}
-              <a href="{{ url_for('historial') }}" class="nav-dropdown-item">Mis pedidos</a>
-            {% endif %}
-            <a href="{{ url_for('cerrar_sesion') }}" class="nav-dropdown-item nav-dropdown-item--danger">Cerrar sesión</a>
-          </div>
-        </div>
+        {% if session.get('rol') == 'Admin' %}
+          <a href="{{ url_for('admin_dashboard') }}" title="Panel Admin">⚙️</a>
+        {% elif session.get('rol') == 'Vendedor' %}
+          <a href="{{ url_for('vendedor_dashboard') }}" title="Panel Vendedor">🏪</a>
+        {% else %}
+          <a href="{{ url_for('mis_pedidos') }}" title="Mis pedidos">📦</a>
+        {% endif %}
+        <a href="{{ url_for('cerrar_sesion') }}" title="Cerrar sesión">🔓</a>
       {% else %}
-        <a href="{{ url_for('login') }}" class="nav-btn nav-btn--login">Iniciar sesión</a>
+        <a href="{{ url_for('login') }}" title="Iniciar sesión">👤</a>
       {% endif %}
-      <a href="{{ url_for('carrito') }}" class="nav-cart" aria-label="Carrito de compras">🛒</a>
     </div>
   </header>
 
   <main>
 
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="position:fixed;top:90px;right:20px;z-index:9999;width:320px;">
+          {% for cat, msg in messages %}
+            <div style="padding:1.2rem 1.6rem;border-radius:1rem;margin-bottom:0.6rem;font-size:1.4rem;
+              background:{% if cat=='danger' %}#fee2e2{% elif cat=='success' %}#dcfce7{% else %}#dbeafe{% endif %};
+              color:{% if cat=='danger' %}#991b1b{% elif cat=='success' %}#166534{% else %}#1e40af{% endif %};
+              box-shadow:0 4px 16px rgba(0,0,0,0.1);">
+              {{ msg }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- HERO -->
     <section class="hero-section">
       <div class="hero-content">
         <span class="hero-label">Muebles infantiles</span>
-
         <h1>Diseña un espacio mágico, cómodo y seguro para los más pequeños</h1>
-
-        <p>
-          Encuentra cunas, camas, cómodas, escritorios y muebles pensados para acompañar
-          cada etapa del crecimiento de tus hijos.
-        </p>
-
+        <p>Encuentra cunas, camas, cómodas, escritorios y muebles pensados para acompañar cada etapa del crecimiento de tus hijos.</p>
         <div class="hero-buttons">
-          <a href="/catalogo" class="primary-button hero-button">Ver catálogo</a>
+          <a href="{{ url_for('catalogo') }}" class="primary-button hero-button">Ver catálogo</a>
           <a href="#ofertas" class="secondary-button">Ver ofertas</a>
         </div>
       </div>
-
       <div class="hero-image">
-        <img 
-          src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-          alt="Mueble infantil Peque Mundo"
-        >
+        <img src="{{ url_for('static', filename='img/peque-mueble.webp') }}" alt="Mueble infantil Peque Mundo">
       </div>
     </section>
 
+    <!-- CATEGORÍAS -->
     <section class="home-categories">
       <div class="section-heading">
         <span>Categorías</span>
         <h2>Encuentra el mueble ideal</h2>
         <p>Explora nuestras principales categorías de muebles infantiles.</p>
       </div>
-
       <div class="category-cards">
-        <a href="/catalogo?categoria=cunas" class="home-category-card">
-          <span>🍼</span>
-          <h3>Cunas</h3>
-          <p>Seguras, cómodas y pensadas para el descanso.</p>
+        <a href="{{ url_for('catalogo', categoria='Cunas') }}" class="home-category-card">
+          <span>🍼</span><h3>Cunas</h3><p>Seguras, cómodas y pensadas para el descanso.</p>
         </a>
-
-        <a href="/catalogo?categoria=camas" class="home-category-card">
-          <span>🛏️</span>
-          <h3>Camas</h3>
-          <p>Diseños infantiles funcionales y modernos.</p>
+        <a href="{{ url_for('catalogo', categoria='Camas') }}" class="home-category-card">
+          <span>🛏️</span><h3>Camas</h3><p>Diseños infantiles funcionales y modernos.</p>
         </a>
-
-        <a href="/catalogo?categoria=comodas" class="home-category-card">
-          <span>🧸</span>
-          <h3>Cómodas</h3>
-          <p>Organización práctica para ropa y accesorios.</p>
+        <a href="{{ url_for('catalogo', categoria='Cómodas') }}" class="home-category-card">
+          <span>🧸</span><h3>Cómodas</h3><p>Organización práctica para ropa y accesorios.</p>
         </a>
-
-        <a href="/catalogo?categoria=escritorios" class="home-category-card">
-          <span>✏️</span>
-          <h3>Escritorios</h3>
-          <p>Espacios ideales para estudiar, crear y jugar.</p>
+        <a href="{{ url_for('catalogo', categoria='Escritorios') }}" class="home-category-card">
+          <span>✏️</span><h3>Escritorios</h3><p>Espacios ideales para estudiar, crear y jugar.</p>
         </a>
       </div>
     </section>
 
+    <!-- OFERTAS -->
     <section class="offers-section" id="ofertas">
       <div class="section-heading">
         <span>Destacados</span>
         <h2>Ofertas y productos recomendados</h2>
         <p>Una selección especial de muebles para renovar el dormitorio infantil.</p>
       </div>
-
       <div class="offer-grid">
-
         <article class="product-card">
           <span class="badge offer">Oferta</span>
-          <img 
-            src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-            alt="Cuna Clásica"
-          >
+          <img src="{{ url_for('static', filename='img/peque-mueble.webp') }}" alt="Cuna Clásica">
           <h3>Cuna Clásica</h3>
           <p class="price">$129.990</p>
           <p class="stock">● En stock</p>
-          <a href="/catalogo" class="product-link">Ver producto</a>
+          <button type="button" onclick="agregarAlCarrito(1, 'Cuna Clásica', 129990, 10)">
+            🛒 Agregar
+          </button>
         </article>
-
         <article class="product-card">
           <span class="badge popular">Popular</span>
-          <img 
-            src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-            alt="Cama Montessori"
-          >
+          <img src="{{ url_for('static', filename='img/peque-mueble.webp') }}" alt="Cama Montessori">
           <h3>Cama Montessori</h3>
           <p class="price">$199.990</p>
           <p class="stock">● En stock</p>
-          <a href="/catalogo" class="product-link">Ver producto</a>
+          <button type="button" onclick="agregarAlCarrito(2, 'Cama Montessori', 199990, 7)">
+            🛒 Agregar
+          </button>
         </article>
-
         <article class="product-card">
           <span class="badge">Nuevo</span>
-          <img 
-            src="{{ url_for('static', filename='img/peque-mueble.webp') }}" 
-            alt="Escritorio Infantil"
-          >
+          <img src="{{ url_for('static', filename='img/peque-mueble.webp') }}" alt="Escritorio Infantil">
           <h3>Escritorio Infantil</h3>
           <p class="price">$89.990</p>
           <p class="stock">● En stock</p>
-          <a href="/catalogo" class="product-link">Ver producto</a>
+          <button type="button" onclick="agregarAlCarrito(4, 'Escritorio Infantil', 89990, 3)">
+            🛒 Agregar
+          </button>
         </article>
-
       </div>
     </section>
 
+    <!-- NOSOTROS -->
     <section class="about-section" id="nosotros">
       <div class="about-content">
         <span>Sobre nosotros</span>
         <h2>Peque Mundo, muebles pensados para crecer junto a tu familia</h2>
-        <p>
-          En Peque Mundo nos enfocamos en ofrecer muebles infantiles funcionales,
-          seguros y con diseños cálidos para crear espacios cómodos, ordenados y llenos de estilo.
-        </p>
+        <p>En Peque Mundo nos enfocamos en ofrecer muebles infantiles funcionales, seguros y con diseños cálidos para crear espacios cómodos, ordenados y llenos de estilo.</p>
       </div>
-
       <div class="benefits-grid">
-        <div class="benefit-card">
-          <span>🔒</span>
-          <h3>Compra segura</h3>
-          <p>Proceso de pago confiable mediante integración con Mercado Pago.</p>
-        </div>
-
-        <div class="benefit-card">
-          <span>🚚</span>
-          <h3>Despacho coordinado</h3>
-          <p>Integración con transporte externo para gestionar tus entregas.</p>
-        </div>
-
-        <div class="benefit-card">
-          <span>🪑</span>
-          <h3>Catálogo actualizado</h3>
-          <p>Productos sincronizados con el catálogo oficial de la empresa.</p>
-        </div>
-
-        <div class="benefit-card">
-          <span>💬</span>
-          <h3>Atención cercana</h3>
-          <p>Soporte y orientación para ayudarte a elegir el mueble correcto.</p>
-        </div>
+        <div class="benefit-card"><span>🔒</span><h3>Compra segura</h3><p>Pago 100% seguro mediante Mercado Pago.</p></div>
+        <div class="benefit-card"><span>🚚</span><h3>Despacho coordinado</h3><p>Entregas coordinadas a todo Chile.</p></div>
+        <div class="benefit-card"><span>🪑</span><h3>Catálogo actualizado</h3><p>Productos siempre disponibles y al día.</p></div>
+        <div class="benefit-card"><span>💬</span><h3>Atención cercana</h3><p>Soporte para ayudarte a elegir el mueble correcto.</p></div>
       </div>
     </section>
 
@@ -204,16 +155,23 @@
       <h3>Peque Mundo</h3>
       <p>Muebles infantiles para espacios únicos.</p>
     </div>
-
     <div class="footer-links">
-      <a href="/">Inicio</a>
-      <a href="/catalogo">Catálogo</a>
-      <a href="/login">Iniciar sesión</a>
-      <a href="/registro">Registrarse</a>
+      <a href="{{ url_for('inicio') }}">Inicio</a>
+      <a href="{{ url_for('catalogo') }}">Catálogo</a>
+      {% if session.get('usuario') %}
+        <a href="{{ url_for('mis_pedidos') }}">Mis pedidos</a>
+        <a href="{{ url_for('cerrar_sesion') }}">Cerrar sesión</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Iniciar sesión</a>
+        <a href="{{ url_for('registro') }}">Registrarse</a>
+      {% endif %}
     </div>
   </footer>
 
-  <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+  <!-- ✅ CARRITO FLOTANTE -->
+  {% include 'carrito_flotante.html' %}
 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

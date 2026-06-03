@@ -14,14 +14,11 @@
     .topbar { height: 56px; border-bottom: 1px solid #e5e7eb; background: #fff; }
     .main-content { background: #f8f9fc; }
     .stat-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; }
-    .badge-estado { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
   </style>
 </head>
 <body>
-
 <div class="d-flex">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar text-white p-3 d-flex flex-column">
     <div class="brand mb-3">
       <span class="fw-bold fs-5">🛋️ Peque Mundo</span><br>
@@ -63,16 +60,12 @@
     </div>
   </aside>
 
-  <!-- MAIN -->
   <div class="flex-grow-1 main-content" style="min-height:100vh;">
-
-    <!-- TOPBAR -->
     <nav class="topbar d-flex align-items-center px-4">
       <span class="fw-semibold text-dark">{% block topbar_titulo %}Panel Admin{% endblock %}</span>
       <span class="ms-auto text-secondary small">Rol: {{ session.get('rol', '') }}</span>
     </nav>
 
-    <!-- FLASH MESSAGES -->
     <div class="px-4 pt-3">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -86,14 +79,11 @@
       {% endwith %}
     </div>
 
-    <!-- CONTENIDO -->
     <div class="p-4">
       {% block contenido %}{% endblock %}
     </div>
-
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
