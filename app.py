@@ -112,14 +112,13 @@ def requiere_cliente(f):
 # UTILIDAD MP
 # =========================
 def crear_preferencia_mp(items_list, cliente_nombre, cliente_email, pedido_id):
-    # Usar host_url del request activo para construir back_urls con host+puerto correctos
     base = request.host_url.rstrip('/')
 
     mp_items = [{
         "id": str(i['id']),
         "title": i['nombre'],
         "quantity": int(i['cantidad']),
-        "unit_price": int(i['precio']),   # CLP requiere entero
+        "unit_price": int(i['precio']),
         "currency_id": "CLP"
     } for i in items_list]
 
@@ -134,11 +133,10 @@ def crear_preferencia_mp(items_list, cliente_nombre, cliente_email, pedido_id):
             "failure": f"{base}/mp/failure",
             "pending": f"{base}/mp/pending",
         },
+        "notification_url": f"{base}/mp/webhook",
         "external_reference": str(pedido_id),
+        "auto_return": "all",
     }
-    # auto_return solo funciona con HTTPS; en localhost se omite para evitar invalid_auto_return
-    if base.startswith('https://'):
-        preference_data["auto_return"] = "approved"
 
     response = sdk.preference().create(preference_data)
     return response.get("response", {})
@@ -755,29 +753,58 @@ def vendedor_crear_pedido():
 # =========================
 # MERCADO PAGO - CALLBACKS
 # =========================
+def _actualizar_pedido_desde_pago(payment_id, external_ref, status_fallback=None):
+    """Verifica el pago via API de MP y actualiza el pedido en BD."""
+    if not external_ref:
+        return
+    try:
+        pedido = Pedido.query.get(int(external_ref))
+    except (ValueError, TypeError):
+        return
+    if not pedido:
+        return
+
+    status = status_fallback
+    if payment_id:
+        try:
+            payment_info = sdk.payment().get(payment_id)
+            payment = payment_info.get("response", {})
+            status = payment.get("status", status_fallback)
+            payment_id = str(payment.get("id", payment_id))
+        except Exception:
+            pass
+
+    if payment_id:
+        pedido.mp_payment_id = str(payment_id)
+    if status:
+        pedido.mp_status = status
+
+    if status == 'approved' and pedido.estado != 'Pagado':
+        pedido.estado = 'Pagado'
+        if pedido.items_json:
+            try:
+                for item in json.loads(pedido.items_json):
+                    prod = Producto.query.get(item['id'])
+                    if prod:
+                        prod.stock = max(0, prod.stock - item['cantidad'])
+                        if prod.stock == 0:
+                            prod.estado = 'Agotado'
+            except Exception:
+                pass
+    elif status == 'rejected':
+        pedido.estado = 'Rechazado'
+    elif status == 'pending':
+        pedido.estado = 'Pendiente'
+
+    db.session.commit()
+
+
 @app.route('/mp/success')
 def mp_success():
     payment_id = request.args.get('payment_id')
     external_ref = request.args.get('external_reference')
     status = request.args.get('status')
-    if external_ref:
-        pedido = Pedido.query.get(int(external_ref))
-        if pedido:
-            pedido.mp_payment_id = payment_id
-            pedido.mp_status = status
-            if status == 'approved':
-                pedido.estado = 'Pagado'
-                if pedido.items_json:
-                    try:
-                        for item in json.loads(pedido.items_json):
-                            prod = Producto.query.get(item['id'])
-                            if prod:
-                                prod.stock = max(0, prod.stock - item['cantidad'])
-                                if prod.stock == 0:
-                                    prod.estado = 'Agotado'
-                    except Exception:
-                        pass
-            db.session.commit()
+    _actualizar_pedido_desde_pago(payment_id, external_ref, status_fallback=status or 'approved')
     flash('¡Pago realizado con éxito!', 'success')
     rol = session.get('rol')
     if rol in ('Vendedor', 'Admin'):
@@ -787,13 +814,10 @@ def mp_success():
 
 @app.route('/mp/failure')
 def mp_failure():
+    payment_id = request.args.get('payment_id')
     external_ref = request.args.get('external_reference')
-    if external_ref:
-        pedido = Pedido.query.get(int(external_ref))
-        if pedido:
-            pedido.mp_status = 'rejected'
-            pedido.estado = 'Rechazado'
-            db.session.commit()
+    status = request.args.get('status')
+    _actualizar_pedido_desde_pago(payment_id, external_ref, status_fallback=status or 'rejected')
     flash('El pago fue rechazado. Intenta nuevamente.', 'danger')
     rol = session.get('rol')
     if rol in ('Vendedor', 'Admin'):
@@ -803,12 +827,10 @@ def mp_failure():
 
 @app.route('/mp/pending')
 def mp_pending():
+    payment_id = request.args.get('payment_id')
     external_ref = request.args.get('external_reference')
-    if external_ref:
-        pedido = Pedido.query.get(int(external_ref))
-        if pedido:
-            pedido.mp_status = 'pending'
-            db.session.commit()
+    status = request.args.get('status')
+    _actualizar_pedido_desde_pago(payment_id, external_ref, status_fallback=status or 'pending')
     flash('Pago pendiente de confirmación.', 'warning')
     rol = session.get('rol')
     if rol in ('Vendedor', 'Admin'):
@@ -823,20 +845,14 @@ def mp_webhook():
     if topic == 'payment':
         payment_id = data.get('data', {}).get('id') or request.args.get('id')
         if payment_id:
-            payment_info = sdk.payment().get(payment_id)
-            payment = payment_info.get("response", {})
-            external_ref = payment.get("external_reference")
-            status = payment.get("status")
-            if external_ref:
-                pedido = Pedido.query.get(int(external_ref))
-                if pedido:
-                    pedido.mp_payment_id = str(payment_id)
-                    pedido.mp_status = status
-                    if status == 'approved':
-                        pedido.estado = 'Pagado'
-                    elif status == 'rejected':
-                        pedido.estado = 'Rechazado'
-                    db.session.commit()
+            try:
+                payment_info = sdk.payment().get(payment_id)
+                payment = payment_info.get("response", {})
+                external_ref = payment.get("external_reference")
+                status = payment.get("status")
+                _actualizar_pedido_desde_pago(str(payment_id), external_ref, status_fallback=status)
+            except Exception:
+                pass
     return jsonify({"status": "ok"}), 200
 
 
