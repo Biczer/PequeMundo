@@ -112,7 +112,7 @@ def requiere_cliente(f):
 # UTILIDAD MP
 # =========================
 def crear_preferencia_mp(items_list, cliente_nombre, cliente_email, pedido_id):
-    base = request.host_url.rstrip('/')
+    base = request.host_url.rstrip('/').replace('http://', 'https://', 1)
 
     mp_items = [{
         "id": str(i['id']),
