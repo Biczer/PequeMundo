@@ -315,7 +315,7 @@ def mis_pedidos():
     pedidos = Pedido.query.filter_by(cliente_email=usuario.email).order_by(Pedido.id.desc()).all()
     return render_template('mis_pedidos.html', pedidos=pedidos)
 
-
+#prueba de commit
 # =========================
 # CARRITO POR SESIÓN (flujo tradicional)
 # =========================
