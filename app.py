@@ -263,8 +263,11 @@ def cerrar_sesion():
 # CARRITO CLIENTE
 # =========================
 @app.route('/carrito/checkout', methods=['POST'])
-@requiere_cliente
 def carrito_checkout():
+    if not session.get('usuario_id'):
+        return jsonify({'error': 'Debes iniciar sesión para comprar.'}), 401
+    if session.get('rol') == 'Vendedor':
+        return jsonify({'error': 'Los vendedores no pueden comprar.'}), 403
     data = request.get_json(silent=True) or {}
     items = data.get('items', [])
     if not items:
