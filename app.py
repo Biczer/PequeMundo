@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from sqlalchemy import text
 import mercadopago
+from urllib.parse import quote_plus
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-pequemundo-2024')
