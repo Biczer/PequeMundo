@@ -12,17 +12,12 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-pequemundo-2024')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    "mysql+pymysql://{user}:{password}@{host}:{port}/{db}".format(
-        user=os.environ.get('MYSQL_USER', 'root'),
-        password=os.environ.get('MYSQL_PASSWORD', ''),
-        host=os.environ.get('MYSQL_HOST', 'localhost'),
-        port=os.environ.get('MYSQL_PORT', '3306'),
-        db=os.environ.get('MYSQL_DATABASE', 'railway'),
-    )
-)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+_db_url = os.environ.get('MYSQL_PUBLIC_URL', '')
+if _db_url.startswith('mysql://'):
+    _db_url = _db_url.replace('mysql://', 'mysql+pymysql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN', 'TEST-7405494608123272-053123-046e81571c23bf9c73efb64662b94c28-585535158')
