@@ -362,23 +362,27 @@
     </div>
 
     {% if session.get('usuario_id') and session.get('rol') == 'Cliente' %}
-      <button class="cdr-checkout-btn" id="cdr-checkout-btn" onclick="carritoCheckout()">
-        <span id="cdr-btn-text">🔒 Pagar con Mercado Pago</span>
-        <span class="cdr-spinner" id="cdr-spinner"></span>
-      </button>
-    {% elif session.get('usuario_id') %}
-      {# Admin o Vendedor — no compran #}
-      <button class="cdr-checkout-btn" disabled>
-        🔒 Solo disponible para clientes
-      </button>
-    {% else %}
-      <button class="cdr-checkout-btn" onclick="window.location='{{ url_for('login') }}'">
-        👤 Iniciar sesión para comprar
-      </button>
-      <p class="cdr-login-note">
-        ¿No tienes cuenta? <a href="{{ url_for('registro') }}">Regístrate gratis</a>
-      </p>
-    {% endif %}
+  <button class="cdr-checkout-btn" id="cdr-checkout-btn" onclick="carritoCheckout()">
+    <span id="cdr-btn-text">🔒 Pagar con Mercado Pago</span>
+    <span class="cdr-spinner" id="cdr-spinner"></span>
+  </button>
+{% elif session.get('usuario_id') and session.get('rol') == 'Admin' %}
+  <button class="cdr-checkout-btn" id="cdr-checkout-btn" onclick="carritoCheckout()">
+    <span id="cdr-btn-text">🔒 Pagar con Mercado Pago</span>
+    <span class="cdr-spinner" id="cdr-spinner"></span>
+  </button>
+{% elif session.get('usuario_id') and session.get('rol') == 'Vendedor' %}
+  <button class="cdr-checkout-btn" disabled>
+    🔒 Solo disponible para clientes
+  </button>
+{% else %}
+  <button class="cdr-checkout-btn" onclick="window.location='{{ url_for('login') }}'">
+    👤 Iniciar sesión para comprar
+  </button>
+  <p class="cdr-login-note">
+    ¿No tienes cuenta? <a href="{{ url_for('registro') }}">Regístrate gratis</a>
+  </p>
+{% endif %}
 
     <button class="cdr-clear" onclick="carritoClear()">🗑 Vaciar carrito</button>
   </div>
