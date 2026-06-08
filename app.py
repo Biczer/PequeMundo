@@ -7,16 +7,13 @@ from functools import wraps
 from sqlalchemy import text
 import mercadopago
 
-load_dotenv()
-
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-pequemundo-2024')
 
-_db_url = os.environ.get('MYSQL_PUBLIC_URL', '')
-if _db_url.startswith('mysql://'):
-    _db_url = _db_url.replace('mysql://', 'mysql+pymysql://', 1)
-app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
-
+password = quote_plus('zZsidTQBUbMlHFdfwBVHJcLWCZuDesdw')
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"mysql+pymysql://root:{password}@acela.proxy.rlwy.net:42425/railway"
+)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
