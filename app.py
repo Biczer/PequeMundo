@@ -115,18 +115,20 @@ def crear_preferencia_mp(items_list, cliente_nombre, cliente_email, pedido_id):
         "currency_id": "CLP"
     } for i in items_list]
 
+    is_test = MP_ACCESS_TOKEN.startswith("TEST-")
+    payer_email = "test_user_123456@testuser.com" if is_test else (cliente_email or "")
+
     preference_data = {
         "items": mp_items,
         "payer": {
             "name": cliente_nombre,
-            "email": cliente_email or "test_user@test.com"
+            "email": payer_email
         },
         "back_urls": {
             "success": f"{base}/mp/success",
             "failure": f"{base}/mp/failure",
             "pending": f"{base}/mp/pending",
         },
-        "notification_url": f"{base}/mp/webhook",
         "external_reference": str(pedido_id),
         "auto_return": "all",
     }
