@@ -9,12 +9,12 @@
 </head>
 <body>
   <header class="home-header">
-    <a href="{{ url_for('inicio') }}" class="home-brand">
+    <a href="{{ url_for('publico.inicio') }}" class="home-brand">
       <img src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" alt="Peque Mundo" class="home-logo">
     </a>
     <nav class="home-nav">
-      <a href="{{ url_for('inicio') }}">Inicio</a>
-      <a href="{{ url_for('catalogo') }}">Catálogo</a>
+      <a href="{{ url_for('publico.inicio') }}">Inicio</a>
+      <a href="{{ url_for('publico.catalogo') }}">Catálogo</a>
     </nav>
     <div class="home-actions">
       {% if session.get('usuario') %}
@@ -23,14 +23,14 @@
             {{ session.get('usuario') }}<span class="nav-chevron">▾</span>
           </button>
           <div class="nav-dropdown" id="navDropdown">
-            <a href="{{ url_for('historial') }}" class="nav-dropdown-item">Mis pedidos</a>
-            <a href="{{ url_for('cerrar_sesion') }}" class="nav-dropdown-item nav-dropdown-item--danger">Cerrar sesión</a>
+            <a href="{{ url_for('pedidos.historial') }}" class="nav-dropdown-item">Mis pedidos</a>
+            <a href="{{ url_for('auth.cerrar_sesion') }}" class="nav-dropdown-item nav-dropdown-item--danger">Cerrar sesión</a>
           </div>
         </div>
       {% else %}
-        <a href="{{ url_for('login') }}" class="nav-btn nav-btn--login">Iniciar sesión</a>
+        <a href="{{ url_for('auth.login') }}" class="nav-btn nav-btn--login">Iniciar sesión</a>
       {% endif %}
-      <a href="{{ url_for('carrito') }}" class="nav-cart">🛒</a>
+      <a href="{{ url_for('carrito.carrito') }}" class="nav-cart">🛒</a>
     </div>
   </header>
 
@@ -43,7 +43,7 @@
 
     <div class="cart-layout">
       <section class="cart-products">
-        <form class="login-form" action="{{ url_for('pago_procesar') }}" method="POST" id="formPago">
+        <form class="login-form" action="{{ url_for('pedidos.pago_procesar') }}" method="POST" id="formPago">
 
           <h2 style="margin-bottom:1rem;">Datos de la tarjeta</h2>
 
@@ -104,7 +104,7 @@
           <p style="font-size:1.3rem;color:#888;margin-top:.5rem;">🔒 Tus datos están protegidos.</p>
 
           <div class="cart-actions-bar" style="margin-top:2rem;">
-            <a href="{{ url_for('checkout') }}" class="secondary-button">← Volver</a>
+            <a href="{{ url_for('pedidos.checkout') }}" class="secondary-button">← Volver</a>
             <button type="submit" class="primary-button">Confirmar pago →</button>
           </div>
         </form>
@@ -137,8 +137,8 @@
   <footer class="home-footer">
     <div><h3>Peque Mundo</h3><p>Muebles infantiles para espacios únicos.</p></div>
     <div class="footer-links">
-      <a href="{{ url_for('inicio') }}">Inicio</a>
-      <a href="{{ url_for('catalogo') }}">Catálogo</a>
+      <a href="{{ url_for('publico.inicio') }}">Inicio</a>
+      <a href="{{ url_for('publico.catalogo') }}">Catálogo</a>
     </div>
   </footer>
 

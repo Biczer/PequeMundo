@@ -48,13 +48,13 @@
         <span class="v-card-title">Acciones rápidas</span>
       </div>
       <div style="padding:1.2rem;display:flex;gap:0.8rem;flex-wrap:wrap;">
-        <a href="{{ url_for('vendedor_crear_pedido') }}" class="v-btn v-btn-primary">
+        <a href="{{ url_for('vendedor.vendedor_crear_pedido') }}" class="v-btn v-btn-primary">
           ➕ Nuevo pedido con pago MP
         </a>
-        <a href="{{ url_for('vendedor_catalogo') }}" class="v-btn v-btn-outline">
+        <a href="{{ url_for('vendedor.vendedor_catalogo') }}" class="v-btn v-btn-outline">
           🛍️ Ver catálogo
         </a>
-        <a href="{{ url_for('vendedor_estadisticas') }}" class="v-btn v-btn-outline">
+        <a href="{{ url_for('vendedor.vendedor_estadisticas') }}" class="v-btn v-btn-outline">
           📈 Ver estadísticas
         </a>
       </div>
@@ -68,7 +68,7 @@
     <div class="v-card">
       <div class="v-card-header">
         <span class="v-card-title">Mis últimos pedidos</span>
-        <a href="{{ url_for('vendedor_pedidos') }}" class="v-btn v-btn-outline v-btn-sm">Ver todos</a>
+        <a href="{{ url_for('vendedor.vendedor_pedidos') }}" class="v-btn v-btn-outline v-btn-sm">Ver todos</a>
       </div>
       <table class="v-table">
         <thead>
@@ -108,7 +108,7 @@
             </td>
           </tr>
           {% else %}
-          <tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:2rem;">No tienes pedidos aún. <a href="{{ url_for('vendedor_crear_pedido') }}">Crear uno</a></td></tr>
+          <tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:2rem;">No tienes pedidos aún. <a href="{{ url_for('vendedor.vendedor_crear_pedido') }}">Crear uno</a></td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -120,7 +120,7 @@
     <div class="v-card">
       <div class="v-card-header">
         <span class="v-card-title">Productos disponibles</span>
-        <a href="{{ url_for('vendedor_catalogo') }}" class="v-btn v-btn-outline v-btn-sm">Ver todos</a>
+        <a href="{{ url_for('vendedor.vendedor_catalogo') }}" class="v-btn v-btn-outline v-btn-sm">Ver todos</a>
       </div>
       <div style="padding:0.5rem 0;">
         {% for p in productos[:6] %}

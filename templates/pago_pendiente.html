@@ -8,7 +8,7 @@
 </head>
 <body>
   <header class="home-header">
-    <a href="{{ url_for('inicio') }}" class="home-brand">
+    <a href="{{ url_for('publico.inicio') }}" class="home-brand">
       <img src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" alt="Peque Mundo" class="home-logo">
     </a>
   </header>
@@ -18,8 +18,8 @@
       <h1>Pago en proceso</h1>
       <p>Tu pago está siendo revisado. Te notificaremos cuando se confirme.</p>
       <div style="display:flex;gap:1rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;">
-        <a href="{{ url_for('historial') }}" class="primary-button">Ver mis pedidos</a>
-        <a href="{{ url_for('inicio') }}" class="secondary-button">Ir al inicio</a>
+        <a href="{{ url_for('pedidos.historial') }}" class="primary-button">Ver mis pedidos</a>
+        <a href="{{ url_for('publico.inicio') }}" class="secondary-button">Ir al inicio</a>
       </div>
     </div>
   </main>

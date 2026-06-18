@@ -9,7 +9,7 @@
     <h2 style="font-size:1.2rem;font-weight:700;margin:0;">Catálogo activo</h2>
     <p style="font-size:0.8rem;color:#6b7280;margin:0;">{{ productos|length }} producto{{ 's' if productos|length != 1 else '' }} disponible{{ 's' if productos|length != 1 else '' }}</p>
   </div>
-  <a href="{{ url_for('vendedor_crear_pedido') }}" class="v-btn v-btn-primary">➕ Nuevo pedido</a>
+  <a href="{{ url_for('vendedor.vendedor_crear_pedido') }}" class="v-btn v-btn-primary">➕ Nuevo pedido</a>
 </div>
 
 <!-- Filtros -->

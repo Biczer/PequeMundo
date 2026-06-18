@@ -81,16 +81,16 @@
 <body>
 
   <header class="home-header">
-    <a href="{{ url_for('inicio') }}" class="home-brand">
+    <a href="{{ url_for('publico.inicio') }}" class="home-brand">
       <img src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" alt="Peque Mundo" class="home-logo">
     </a>
     <nav class="home-nav">
-      <a href="{{ url_for('inicio') }}">Inicio</a>
-      <a href="{{ url_for('catalogo') }}">Catálogo</a>
-      <a href="{{ url_for('mis_pedidos') }}" style="color:#4f7df3;">Mis pedidos</a>
+      <a href="{{ url_for('publico.inicio') }}">Inicio</a>
+      <a href="{{ url_for('publico.catalogo') }}">Catálogo</a>
+      <a href="{{ url_for('pedidos.mis_pedidos') }}" style="color:#4f7df3;">Mis pedidos</a>
     </nav>
     <div class="home-actions">
-      <a href="{{ url_for('cerrar_sesion') }}" title="Cerrar sesión">🔓</a>
+      <a href="{{ url_for('auth.cerrar_sesion') }}" title="Cerrar sesión">🔓</a>
     </div>
   </header>
 
@@ -111,7 +111,7 @@
 
     <div class="pedidos-header">
       <h1>📦 Mis pedidos</h1>
-      <a href="{{ url_for('catalogo') }}" class="primary-button"
+      <a href="{{ url_for('publico.catalogo') }}" class="primary-button"
          style="display:inline-flex;align-items:center;padding:0 2.4rem;height:4.8rem;border-radius:1rem;text-decoration:none;font-size:1.5rem;">
         🛍️ Seguir comprando
       </a>
@@ -166,7 +166,7 @@
         <span class="emoji">🛒</span>
         <h2>Aún no tienes pedidos</h2>
         <p>Explora nuestro catálogo y realiza tu primera compra.</p>
-        <a href="{{ url_for('catalogo') }}" class="primary-button"
+        <a href="{{ url_for('publico.catalogo') }}" class="primary-button"
            style="display:inline-flex;align-items:center;padding:0 3rem;height:5.2rem;border-radius:1rem;text-decoration:none;font-size:1.6rem;">
           Ver catálogo →
         </a>

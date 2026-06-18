@@ -390,41 +390,41 @@
   <nav class="v-sidebar-nav">
     <div class="v-nav-section">Principal</div>
 
-    <a href="{{ url_for('vendedor_dashboard') }}"
-       class="v-nav-link {% if request.endpoint == 'vendedor_dashboard' %}active{% endif %}">
+    <a href="{{ url_for('vendedor.vendedor_dashboard') }}"
+       class="v-nav-link {% if request.endpoint == 'vendedor.vendedor_dashboard' %}active{% endif %}">
       <span class="nav-icon">📊</span> Dashboard
     </a>
 
-    <a href="{{ url_for('vendedor_estadisticas') }}"
-       class="v-nav-link {% if request.endpoint == 'vendedor_estadisticas' %}active{% endif %}">
+    <a href="{{ url_for('vendedor.vendedor_estadisticas') }}"
+       class="v-nav-link {% if request.endpoint == 'vendedor.vendedor_estadisticas' %}active{% endif %}">
       <span class="nav-icon">📈</span> Estadísticas
     </a>
 
     <div class="v-nav-section">Gestión</div>
 
-    <a href="{{ url_for('vendedor_pedidos') }}"
-       class="v-nav-link {% if request.endpoint == 'vendedor_pedidos' %}active{% endif %}">
+    <a href="{{ url_for('vendedor.vendedor_pedidos') }}"
+       class="v-nav-link {% if request.endpoint == 'vendedor.vendedor_pedidos' %}active{% endif %}">
       <span class="nav-icon">📦</span> Mis Pedidos
     </a>
 
-    <a href="{{ url_for('vendedor_crear_pedido') }}"
-       class="v-nav-link {% if request.endpoint == 'vendedor_crear_pedido' %}active{% endif %}">
+    <a href="{{ url_for('vendedor.vendedor_crear_pedido') }}"
+       class="v-nav-link {% if request.endpoint == 'vendedor.vendedor_crear_pedido' %}active{% endif %}">
       <span class="nav-icon">➕</span> Nuevo Pedido
     </a>
 
-    <a href="{{ url_for('vendedor_catalogo') }}"
-       class="v-nav-link {% if request.endpoint == 'vendedor_catalogo' %}active{% endif %}">
+    <a href="{{ url_for('vendedor.vendedor_catalogo') }}"
+       class="v-nav-link {% if request.endpoint == 'vendedor.vendedor_catalogo' %}active{% endif %}">
       <span class="nav-icon">🛍️</span> Catálogo
     </a>
 
     <div class="v-nav-section">Accesos</div>
 
-    <a href="{{ url_for('inicio') }}" class="v-nav-link">
+    <a href="{{ url_for('publico.inicio') }}" class="v-nav-link">
       <span class="nav-icon">🌐</span> Ver tienda
     </a>
 
     {% if session.get('rol') == 'Admin' %}
-    <a href="{{ url_for('admin_dashboard') }}" class="v-nav-link">
+    <a href="{{ url_for('admin.admin_dashboard') }}" class="v-nav-link">
       <span class="nav-icon">⚙️</span> Panel Admin
     </a>
     {% endif %}
@@ -437,7 +437,7 @@
         <div class="v-user-name">{{ session.get('usuario', 'Vendedor') }}</div>
         <div class="v-user-role">{{ session.get('rol', 'Vendedor') }}</div>
       </div>
-      <a href="{{ url_for('cerrar_sesion') }}" class="v-logout-btn" title="Cerrar sesión">⏻</a>
+      <a href="{{ url_for('auth.cerrar_sesion') }}" class="v-logout-btn" title="Cerrar sesión">⏻</a>
     </div>
   </div>
 </aside>

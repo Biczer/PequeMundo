@@ -9,7 +9,7 @@
     <h2 style="font-size:1.2rem;font-weight:700;margin:0;">Mis pedidos</h2>
     <p style="font-size:0.8rem;color:#6b7280;margin:0;">{{ pedidos|length }} pedido{{ 's' if pedidos|length != 1 else '' }} registrado{{ 's' if pedidos|length != 1 else '' }}</p>
   </div>
-  <a href="{{ url_for('vendedor_crear_pedido') }}" class="v-btn v-btn-primary">➕ Nuevo pedido</a>
+  <a href="{{ url_for('vendedor.vendedor_crear_pedido') }}" class="v-btn v-btn-primary">➕ Nuevo pedido</a>
 </div>
 
 <div class="v-card">
@@ -62,7 +62,7 @@
       <tr>
         <td colspan="7" style="text-align:center;color:#9ca3af;padding:3rem;">
           No tienes pedidos aún.<br>
-          <a href="{{ url_for('vendedor_crear_pedido') }}" style="color:#4f7df3;font-weight:600;">Crear tu primer pedido →</a>
+          <a href="{{ url_for('vendedor.vendedor_crear_pedido') }}" style="color:#4f7df3;font-weight:600;">Crear tu primer pedido →</a>
         </td>
       </tr>
       {% endfor %}

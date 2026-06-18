@@ -376,11 +376,11 @@
     🔒 Solo disponible para clientes
   </button>
 {% else %}
-  <button class="cdr-checkout-btn" onclick="window.location='{{ url_for('login') }}'">
+  <button class="cdr-checkout-btn" onclick="window.location='{{ url_for('auth.login') }}'">
     👤 Iniciar sesión para comprar
   </button>
   <p class="cdr-login-note">
-    ¿No tienes cuenta? <a href="{{ url_for('registro') }}">Regístrate gratis</a>
+    ¿No tienes cuenta? <a href="{{ url_for('auth.registro') }}">Regístrate gratis</a>
   </p>
 {% endif %}
 

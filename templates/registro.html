@@ -33,7 +33,7 @@
       <h1>Crear cuenta</h1>
       <p>Regístrate para continuar</p>
 
-      <form class="login-form" action="{{ url_for('registro') }}" method="POST">
+      <form class="login-form" action="{{ url_for('auth.registro') }}" method="POST">
         <div class="form-group">
           <label for="nombre">Nombre completo</label>
           <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre" required>
@@ -58,12 +58,12 @@
       </form>
 
       <p class="register-text">
-        ¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a>
+        ¿Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesión</a>
       </p>
     </div>
 
     <div style="margin-top:1.6rem;">
-      <a href="{{ url_for('inicio') }}" style="color:#6b7280;font-size:1.4rem;text-decoration:none;">← Volver al inicio</a>
+      <a href="{{ url_for('publico.inicio') }}" style="color:#6b7280;font-size:1.4rem;text-decoration:none;">← Volver al inicio</a>
     </div>
 
   </main>

@@ -27,28 +27,28 @@
 
     <ul class="nav flex-column flex-grow-1">
       <li class="nav-item">
-        <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+        <a href="{{ url_for('admin.dashboard') }}" class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
           <span class="icon">📊</span> Dashboard
         </a>
       </li>
       <li class="nav-item">
-        <a href="{{ url_for('productos') }}" class="nav-link {% if request.endpoint in ['productos','agregar_producto','editar_producto'] %}active{% endif %}">
+        <a href="{{ url_for('admin.productos') }}" class="nav-link {% if request.endpoint in ['admin.productos','admin.agregar_producto','admin.editar_producto'] %}active{% endif %}">
           <span class="icon">🛋️</span> Productos
         </a>
       </li>
       <li class="nav-item">
-        <a href="{{ url_for('pedidos') }}" class="nav-link {% if request.endpoint == 'pedidos' %}active{% endif %}">
+        <a href="{{ url_for('admin.pedidos') }}" class="nav-link {% if request.endpoint == 'admin.pedidos' %}active{% endif %}">
           <span class="icon">📦</span> Pedidos
         </a>
       </li>
       <li class="nav-item">
-        <a href="{{ url_for('usuarios') }}" class="nav-link {% if request.endpoint == 'usuarios' %}active{% endif %}">
+        <a href="{{ url_for('admin.usuarios') }}" class="nav-link {% if request.endpoint == 'admin.usuarios' %}active{% endif %}">
           <span class="icon">👥</span> Usuarios
         </a>
       </li>
       <hr class="border-secondary">
       <li class="nav-item">
-        <a href="{{ url_for('inicio') }}" class="nav-link">
+        <a href="{{ url_for('publico.inicio') }}" class="nav-link">
           <span class="icon">🌐</span> Ver tienda
         </a>
       </li>
@@ -56,7 +56,7 @@
 
     <div class="mt-auto pt-3 border-top border-secondary">
       <small class="text-secondary d-block mb-2">{{ session.get('usuario', 'Admin') }}</small>
-      <a href="{{ url_for('cerrar_sesion') }}" class="btn btn-danger btn-sm w-100">Cerrar sesión</a>
+      <a href="{{ url_for('auth.cerrar_sesion') }}" class="btn btn-danger btn-sm w-100">Cerrar sesión</a>
     </div>
   </aside>
 

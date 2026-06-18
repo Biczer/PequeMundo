@@ -33,7 +33,7 @@
       <h1>¡Bienvenido!</h1>
       <p>Inicia sesión para continuar</p>
 
-      <form class="login-form" action="{{ url_for('login') }}" method="POST">
+      <form class="login-form" action="{{ url_for('auth.login') }}" method="POST">
         <div class="form-group">
           <label for="email">Correo electrónico</label>
           <input type="email" id="email" name="email" placeholder="ejemplo@ejemplo.com" required>
@@ -47,7 +47,7 @@
       </form>
 
       <p class="register-text">
-        ¿No tienes cuenta? <a href="{{ url_for('registro') }}">Regístrate</a>
+        ¿No tienes cuenta? <a href="{{ url_for('auth.registro') }}">Regístrate</a>
       </p>
 
       <p style="font-size:1.2rem;color:#9ca3af;text-align:center;margin-top:2rem;">
@@ -56,7 +56,7 @@
     </div>
 
     <div style="margin-top:1.6rem;">
-      <a href="{{ url_for('inicio') }}" style="color:#6b7280;font-size:1.4rem;text-decoration:none;">← Volver al inicio</a>
+      <a href="{{ url_for('publico.inicio') }}" style="color:#6b7280;font-size:1.4rem;text-decoration:none;">← Volver al inicio</a>
     </div>
 
   </main>

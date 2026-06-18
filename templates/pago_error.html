@@ -8,7 +8,7 @@
 </head>
 <body>
   <header class="home-header">
-    <a href="{{ url_for('inicio') }}" class="home-brand">
+    <a href="{{ url_for('publico.inicio') }}" class="home-brand">
       <img src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" alt="Peque Mundo" class="home-logo">
     </a>
   </header>
@@ -18,7 +18,7 @@
       <h1>Error al conectar con el sistema de pago</h1>
       <p>No se pudo establecer conexión con Mercado Pago. Intenta más tarde.</p>
       {% if error %}<p style="font-size:.8rem;color:#aaa;">Detalle: {{ error }}</p>{% endif %}
-      <a href="{{ url_for('carrito') }}" class="primary-button" style="margin-top:1.5rem;display:inline-block;">Volver al carrito</a>
+      <a href="{{ url_for('carrito.carrito') }}" class="primary-button" style="margin-top:1.5rem;display:inline-block;">Volver al carrito</a>
     </div>
   </main>
 </body>
