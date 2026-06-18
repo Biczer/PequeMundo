@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN', 'TEST-7405494608123272-053123-046e81571c23bf9c73efb64662b94c28-585535158')
+MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN', 'APP_USR-2602588492542868-052513-1b2fa70861fd23856b1622fbdb502567-3250900679')
 sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
 
 
@@ -115,20 +115,18 @@ def crear_preferencia_mp(items_list, cliente_nombre, cliente_email, pedido_id):
         "currency_id": "CLP"
     } for i in items_list]
 
-    is_test = MP_ACCESS_TOKEN.startswith("TEST-")
-    payer_email = "test_user_123456@testuser.com" if is_test else (cliente_email or "")
-
     preference_data = {
         "items": mp_items,
         "payer": {
             "name": cliente_nombre,
-            "email": payer_email
+            "email": cliente_email or ""
         },
         "back_urls": {
             "success": f"{base}/mp/success",
             "failure": f"{base}/mp/failure",
             "pending": f"{base}/mp/pending",
         },
+        "notification_url": f"{base}/mp/webhook",
         "external_reference": str(pedido_id),
         "auto_return": "all",
     }
