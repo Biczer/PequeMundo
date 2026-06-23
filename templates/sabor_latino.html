@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <title>Sabor Latino Chile - Socios Peque Mundo</title>
+</head>
+<body>
+
+  <header class="home-header">
+    <a href="{{ url_for('publico.inicio') }}" class="home-brand">
+      <img src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}" alt="Peque Mundo" class="home-logo">
+    </a>
+    <nav class="home-nav">
+      <a href="{{ url_for('publico.inicio') }}">Inicio</a>
+      <a href="{{ url_for('publico.catalogo') }}">Catálogo</a>
+      <a href="{{ url_for('publico.sabor_latino') }}" style="color:var(--color-primary);">Socios</a>
+      <a href="{{ url_for('publico.inicio') }}#nosotros">Nosotros</a>
+    </nav>
+    <div class="home-actions">
+      {% if session.get('usuario') %}
+        {% if session.get('rol') == 'Admin' %}
+          <a href="{{ url_for('admin.admin_dashboard') }}" title="Panel Admin">⚙️</a>
+        {% elif session.get('rol') == 'Vendedor' %}
+          <a href="{{ url_for('vendedor.vendedor_dashboard') }}" title="Panel Vendedor">🏪</a>
+        {% else %}
+          <a href="{{ url_for('pedidos.mis_pedidos') }}" title="Mis pedidos">📦</a>
+        {% endif %}
+        <a href="{{ url_for('auth.cerrar_sesion') }}" title="Cerrar sesión">🔓</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" title="Iniciar sesión">👤</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <section class="catalog-hero">
+    <div class="catalog-hero-inner">
+      <span class="hero-label">Socio oficial</span>
+      <h1>Sabor Latino Chile</h1>
+      <p>Productos seleccionados de nuestro socio estratégico.</p>
+    </div>
+  </section>
+
+  <main class="catalog-main">
+
+    {% if error %}
+      <div class="flash flash-danger" style="margin-bottom:2rem;">
+        No se pudo conectar con el catálogo del socio. Intenta más tarde.
+      </div>
+    {% else %}
+
+      <div class="search-container" style="margin-bottom:2rem;">
+        <input type="text" id="buscador" placeholder="Buscar productos..." oninput="filtrar()">
+        <button type="button" onclick="filtrar()">🔍</button>
+      </div>
+
+      <nav class="category-list" id="categoryList">
+        <button class="category active" type="button" onclick="setCat(this, '')">Todos</button>
+        {% for cat in categorias %}
+          <button class="category" type="button" onclick="setCat(this, '{{ cat }}')">
+            {{ cat | capitalize }}
+          </button>
+        {% endfor %}
+      </nav>
+
+      <section class="product-grid" id="productGrid">
+        {% for p in productos %}
+          <article class="product-card"
+            data-nombre="{{ p.nombre | lower }}"
+            data-cat="{{ p.categoria }}"
+            data-desc="{{ p.descripcion | lower }}">
+
+            {% if p.destacado %}
+              <span class="badge popular">Destacado</span>
+            {% endif %}
+
+            <img src="{{ p.imagen }}"
+                 alt="{{ p.nombre }}"
+                 onerror="this.src='{{ url_for('static', filename='img/peque-mueble.webp') }}'">
+
+            <h3>{{ p.nombre }}</h3>
+
+            <p style="font-size:1.3rem;color:#6b7280;margin-bottom:0.8rem;">
+              {{ p.descripcion[:70] }}{% if p.descripcion|length > 70 %}...{% endif %}
+            </p>
+
+            {% if p.material %}
+              <p style="font-size:1.2rem;color:#9ca3af;margin-bottom:0.4rem;">
+                Material: {{ p.material }}
+              </p>
+            {% endif %}
+            {% if p.edad_recomendada %}
+              <p style="font-size:1.2rem;color:#9ca3af;margin-bottom:0.8rem;">
+                Edad: {{ p.edad_recomendada }}
+              </p>
+            {% endif %}
+
+            <p class="price">{{ p.precio_formateado }}</p>
+
+            {% if p.stock > 0 %}
+              <p class="stock">● En stock ({{ p.stock }} disponibles)</p>
+              <button type="button"
+                onclick="agregarAlCarrito('{{ p.id }}', '{{ p.nombre | replace("'", "\\'") }}', {{ p.precio }}, {{ p.stock }})">
+                🛒 Agregar al carrito
+              </button>
+            {% else %}
+              <p style="color:#ef4444;font-size:1.3rem;margin-bottom:1.4rem;">● Agotado</p>
+              <button type="button" disabled style="opacity:0.5;cursor:not-allowed;">Sin stock</button>
+            {% endif %}
+
+          </article>
+        {% endfor %}
+      </section>
+
+      <p class="catalog-empty" id="emptyMsg" style="display:none;">
+        No hay productos en esta categoría.
+      </p>
+
+    {% endif %}
+
+  </main>
+
+  <footer class="home-footer">
+    <div>
+      <h3>Peque Mundo</h3>
+      <p>Muebles infantiles para espacios únicos.</p>
+    </div>
+    <div class="footer-links">
+      <a href="{{ url_for('publico.inicio') }}">Inicio</a>
+      <a href="{{ url_for('publico.catalogo') }}">Catálogo</a>
+      <a href="{{ url_for('publico.sabor_latino') }}">Socios</a>
+      {% if session.get('usuario') %}
+        <a href="{{ url_for('pedidos.mis_pedidos') }}">Mis pedidos</a>
+        <a href="{{ url_for('auth.cerrar_sesion') }}">Cerrar sesión</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Iniciar sesión</a>
+        <a href="{{ url_for('auth.registro') }}">Registrarse</a>
+      {% endif %}
+    </div>
+  </footer>
+
+  {% include 'carrito_flotante.html' %}
+
+  <script>
+    function setCat(btn, cat) {
+      document.querySelectorAll('#categoryList .category')
+        .forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filtrarPorCat(cat);
+    }
+
+    function filtrar() {
+      const texto = document.getElementById('buscador').value.toLowerCase().trim();
+      const catActiva = document.querySelector('#categoryList .category.active');
+      const cat = catActiva ? catActiva.dataset.cat || '' : '';
+      const cards = document.querySelectorAll('#productGrid .product-card');
+      let visibles = 0;
+      cards.forEach(card => {
+        const matchCat  = !cat || card.dataset.cat === cat;
+        const matchText = !texto ||
+          card.dataset.nombre.includes(texto) ||
+          card.dataset.desc.includes(texto);
+        card.style.display = (matchCat && matchText) ? '' : 'none';
+        if (matchCat && matchText) visibles++;
+      });
+      document.getElementById('emptyMsg').style.display = visibles === 0 ? 'block' : 'none';
+    }
+
+    document.querySelectorAll('#categoryList .category').forEach((btn, i) => {
+      btn.dataset.cat = i === 0 ? '' : btn.textContent.trim().toLowerCase();
+    });
+  </script>
+
+</body>
+</html>
