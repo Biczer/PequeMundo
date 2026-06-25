@@ -26,14 +26,14 @@
             <span style="font-size:0.72rem;color:#9ca3af;">Se usa para la notificación de pago de Mercado Pago</span>
           </div>
 
-          <!-- Selector de productos -->
+          <!-- Selector de producto -->
           <div style="margin-bottom:0.8rem;">
-            <label style="font-size:0.78rem;font-weight:600;color:#374151;display:block;margin-bottom:0.8rem;">Agregar productos</label>
+            <label style="font-size:0.78rem;font-weight:600;color:#374151;display:block;margin-bottom:0.8rem;">Agregar producto</label>
             <div style="display:flex;gap:0.6rem;margin-bottom:0.6rem;">
-              <select id="productoSelect"
+              <select id="productoelect"
                 style="flex:1;padding:0.6rem 0.9rem;border:1px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;outline:none;">
                 <option value="">— Seleccionar producto —</option>
-                {% for p in productos %}
+                {% for p in producto %}
                 <option value="{{ p.id }}"
                   data-nombre="{{ p.nombre }}"
                   data-precio="{{ p.precio|int }}"
@@ -116,7 +116,7 @@
       </div>
       <div style="padding:1.2rem;">
         {% set steps = [
-          ('1', 'Crear pedido', 'Completa los datos del cliente y productos'),
+          ('1', 'Crear pedido', 'Completa los datos del cliente y producto'),
           ('2', 'Checkout MP', 'Se abre el pago seguro de Mercado Pago'),
           ('3', 'Pago', 'El cliente paga con tarjeta u otro método'),
           ('4', 'Webhook', 'MP notifica automáticamente el estado'),
@@ -143,7 +143,7 @@
   let items = [];
 
   function agregarProducto() {
-    const sel = document.getElementById('productoSelect');
+    const sel = document.getElementById('productoelect');
     const cant = parseInt(document.getElementById('cantidadInput').value) || 1;
     const opt = sel.selectedOptions[0];
 
