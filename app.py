@@ -8,9 +8,8 @@ db = SQLAlchemy()
 
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")  
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
 
 
 def create_app():
@@ -18,16 +17,14 @@ def create_app():
 
     app.config.from_object(Config)
 
-   
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_pre_ping": True,
-    "pool_recycle": 300
+        "pool_pre_ping": True,
+        "pool_recycle": 300
     }
 
     db.init_app(app)
 
-  
-    
+    # Blueprints
     from auth import auth_bp
     from publico import publico_bp
     from carrito import carrito_bp
@@ -46,12 +43,12 @@ def create_app():
     app.register_blueprint(mp_bp)
     app.register_blueprint(api_bp)
 
-   
+    # ---------------- ROUTES ----------------
+
     @app.route("/env")
     def env():
         return os.getenv("TEST", "NO")
 
-    
     @app.route("/testdb")
     def testdb():
         try:
@@ -60,7 +57,6 @@ def create_app():
         except Exception as e:
             return str(e)
 
-   
     @app.template_filter('from_json')
     def from_json_filter(value):
         try:
@@ -68,31 +64,38 @@ def create_app():
         except Exception:
             return []
 
-    
     @app.route("/ping")
     def ping():
         return "PONG"
 
     @app.route("/debug-db")
     def debug_db():
-        from models import Producto 
+        from models import Producto
         productos = Producto.query.all()
         return {"count": len(productos)}
 
-    
     @app.route("/")
     def home():
-        from models import Producto  
+        from models import Producto
         productos = Producto.query.all()
         return {
             "productos": [p.id for p in productos]
         }
+
     @app.route("/catalogo")
     def catalogo():
         try:
-            productos = db.session.execute(text("SELECT * FROM producto")).fetchall()
-            return {"productos": [dict(p._mapping) for p in productos]}
+            productos = db.session.execute(
+                text("SELECT * FROM producto")
+            ).fetchall()
+
+            return {
+                "productos": [dict(p._mapping) for p in productos]
+            }
+
         except Exception as e:
             return str(e), 500
+
     print("RUTAS CARGADAS")
+
     return app
