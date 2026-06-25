@@ -1,64 +1,84 @@
-import os
-import mysql.connector
-from flask import Flask, jsonify, request
-from database.conexion import get_connection
+from flask import Blueprint, jsonify, request
+from models.producto import Producto
 
 
+producto_api_bp = Blueprint(
+    "producto_api",
+    __name__
+)
 
-@app.get("/api/producto")
-def listar_producto():
+
+@producto_api_bp.route("/api/productos")
+def listar_productos():
+
     categoria = request.args.get("categoria", "").strip()
-    try:
-        conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
-        if categoria:
-            cursor.execute(
-                "SELECT * FROM producto WHERE categoria = %s AND estado = 'Activo' ORDER BY id_producto",
-                (categoria,)
-            )
-        else:
-            cursor.execute("SELECT * FROM producto WHERE estado = 'Activo' ORDER BY id_producto")
-        producto = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return jsonify(producto)
-    except mysql.connector.Error as e:
-        return jsonify({"error": "Error de base de datos", "detalle": str(e)}), 500
 
+    query = Producto.query.filter(
+        Producto.estado == "Activo"
+    )
 
-@app.get("/api/producto/<int:id>")
-def obtener_producto(id):
-    try:
-        conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM producto WHERE id = %s", (id,))
-        producto = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        if producto is None:
-            return jsonify({"error": f"Producto #{id} no encontrado"}), 404
-        return jsonify(producto)
-    except mysql.connector.Error as e:
-        return jsonify({"error": "Error de base de datos", "detalle": str(e)}), 500
-
-
-@app.get("/api/categorias")
-def listar_categorias():
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT DISTINCT categoria FROM producto WHERE estado = 'Activo' ORDER BY categoria"
+    if categoria:
+        query = query.filter(
+            Producto.categoria == categoria
         )
-        categorias = [row[0] for row in cursor.fetchall()]
-        cursor.close()
-        conn.close()
-        return jsonify(categorias)
-    except mysql.connector.Error as e:
-        return jsonify({"error": "Error de base de datos", "detalle": str(e)}), 500
+
+    productos = query.order_by(
+        Producto.id_producto
+    ).all()
+
+    return jsonify([
+        {
+            "id_producto": p.id_producto,
+            "nombre": p.nombre,
+            "descripcion": p.descripcion,
+            "imagen": p.imagen,
+            "categoria": p.categoria,
+            "precio": p.precio,
+            "stock": p.stock,
+            "estado": p.estado
+        }
+        for p in productos
+    ])
 
 
-if __name__ == "__main__":
-    port = int(os.environ.get("API_PORT", 5002))
-    print(f"[producto_api] Corriendo en http://localhost:{port}")
-    app.run(debug=True, port=port)
+
+@producto_api_bp.route("/api/productos/<int:id_producto>")
+def obtener_producto(id_producto):
+
+    producto = Producto.query.get(id_producto)
+
+    if producto is None:
+        return jsonify({
+            "error": f"Producto #{id_producto} no encontrado"
+        }), 404
+
+
+    return jsonify({
+        "id_producto": producto.id_producto,
+        "nombre": producto.nombre,
+        "descripcion": producto.descripcion,
+        "imagen": producto.imagen,
+        "categoria": producto.categoria,
+        "precio": producto.precio,
+        "stock": producto.stock,
+        "estado": producto.estado
+    })
+
+
+
+@producto_api_bp.route("/api/categorias")
+def listar_categorias():
+
+    categorias = (
+        Producto.query
+        .with_entities(Producto.categoria)
+        .filter(Producto.estado == "Activo")
+        .distinct()
+        .order_by(Producto.categoria)
+        .all()
+    )
+
+    return jsonify([
+        categoria[0]
+        for categoria in categorias
+    ])
