@@ -50,7 +50,7 @@ def checkout_json():
 
     data = request.get_json(silent=True) or {}
 
-    items = data.get('items', [])
+    items = data.get('items') or session.get('carrito', [])
 
 
     if not items:
