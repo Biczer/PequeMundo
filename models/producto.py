@@ -2,7 +2,7 @@ from extensions import db
 
 
 class Producto(db.Model):
-    __tablename__ = 'producto'
+    __tablename__ = 'productos'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
     descripcion = db.Column(db.String(300), nullable=False)
