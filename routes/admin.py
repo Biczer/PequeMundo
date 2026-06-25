@@ -11,8 +11,8 @@ admin_bp = Blueprint('admin', __name__)
 def dashboard():
     producto = Producto.query.all()
     pedidos = Pedido.query.all()
-    usuarios = Usuario.query.all()
-    return render_template('dashboard.html', producto=producto, pedidos=pedidos, usuarios=usuarios)
+    usuario = Usuario.query.all()
+    return render_template('dashboard.html', producto=producto, pedidos=pedidos, usuario=usuario)
 
 
 @admin_bp.route('/admin/panel')
@@ -89,11 +89,11 @@ def pedidos():
     return render_template('pedidos.html', pedidos=pedidos)
 
 
-@admin_bp.route('/admin/usuarios')
+@admin_bp.route('/admin/usuario')
 @requiere_admin
-def usuarios():
-    usuarios = Usuario.query.all()
-    return render_template('usuarios.html', usuarios=usuarios)
+def usuario():
+    usuario = Usuario.query.all()
+    return render_template('usuario.html', usuario=usuario)
 
 
 @admin_bp.route('/admin/actualizar_rol/<int:id>', methods=['POST'])
@@ -106,4 +106,4 @@ def actualizar_rol(id):
     usuario.rol = request.form['rol']
     db.session.commit()
     flash('Rol actualizado.', 'success')
-    return redirect(url_for('admin.usuarios'))
+    return redirect(url_for('admin.usuario'))
