@@ -37,7 +37,7 @@ def _actualizar_pedido_desde_pago(payment_id, external_ref, status_fallback=None
         if pedido.items_json:
             try:
                 for item in json.loads(pedido.items_json):
-                    prod = db.session.get(Producto, item['id'])
+                    prod = db.session.get(Producto, item['id_producto'])
                     if prod:
                         prod.stock = max(0, prod.stock - item['cantidad'])
                         if prod.stock == 0:
