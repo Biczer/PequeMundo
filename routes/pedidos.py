@@ -51,7 +51,8 @@ def checkout_json():
     data = request.get_json(silent=True) or {}
 
     items = data.get('items') or session.get('carrito', [])
-
+    print("DATA RECIBIDA:", data)
+    print("ITEMS DEL CARRITO:", items)
 
     if not items:
         return jsonify({
