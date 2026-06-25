@@ -114,7 +114,7 @@ def checkout_json():
 
     nuevo_pedido = Pedido(
 
-        cliente=usuario.nombre,
+        cliente=usuario.nombre_usuario,
 
         cliente_email=usuario.email,
 
@@ -150,7 +150,7 @@ def checkout_json():
 
             items,
 
-            usuario.nombre,
+            usuario.nombre_usuario,
 
             usuario.email,
 
