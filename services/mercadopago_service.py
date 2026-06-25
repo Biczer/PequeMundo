@@ -3,7 +3,8 @@ import mercadopago
 
 
 MP_ACCESS_TOKEN = os.environ.get(
-    'MP_ACCESS_TOKEN'
+    'MP_ACCESS_TOKEN',
+    'TEST-7405494608123272-053123-046e81571c23bf9c73efb64662b94c28-585535158'
 )
 
 
@@ -19,6 +20,7 @@ def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base
     mp_items = [
 
         {
+
             "id": str(i['id_producto']),
 
             "title": i['nombre'],
@@ -54,25 +56,19 @@ def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base
 
         "back_urls": {
 
-
             "success": f"{base_url}/mp/success",
 
-
             "failure": f"{base_url}/mp/failure",
-
 
             "pending": f"{base_url}/mp/pending"
 
         },
 
 
-
         "notification_url": f"{base_url}/mp/webhook",
 
 
-
         "external_reference": str(pedido_id),
-
 
 
         "auto_return": "approved"
@@ -90,7 +86,6 @@ def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base
         "response",
         {}
     )
-
 
 
 
