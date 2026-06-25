@@ -24,7 +24,7 @@ def create_app():
 
     db.init_app(app)
 
-    # Blueprints
+    # ---------------- BLUEPRINTS ----------------
     from auth import auth_bp
     from publico import publico_bp
     from carrito import carrito_bp
@@ -57,7 +57,7 @@ def create_app():
         except Exception as e:
             return str(e)
 
-    @app.template_filter('from_json')
+    @app.template_filter("from_json")
     def from_json_filter(value):
         try:
             return json.loads(value)
@@ -99,3 +99,7 @@ def create_app():
     print("RUTAS CARGADAS")
 
     return app
+
+
+# 🔥 IMPORTANTE: esto arregla Gunicorn en Render
+app = create_app()
