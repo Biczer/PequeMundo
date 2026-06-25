@@ -1,11 +1,12 @@
 from extensions import db
 
+
 class Pedido(db.Model):
 
     __tablename__ = 'pedido'
 
 
-    id_usuario = db.Column(
+    id = db.Column(
         db.Integer,
         primary_key=True
     )
