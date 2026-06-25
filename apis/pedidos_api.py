@@ -7,7 +7,6 @@ from database.conexion import get_connection
 
 load_dotenv()
 
-app = Flask(__name__)
 
 API_KEY = os.environ.get("PEDIDOS_API_KEY", "dev-api-key-pequemundo")
 
