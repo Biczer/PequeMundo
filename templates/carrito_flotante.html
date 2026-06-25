@@ -1,130 +1,296 @@
+{# carrito_flotante.html #}
+
+<style>
+#carrito-fab{
+ position:fixed;
+ bottom:2.4rem;
+ right:2.4rem;
+ z-index:9000;
+ width:60px;
+ height:60px;
+ border-radius:50%;
+ background:#111827;
+ color:white;
+ border:none;
+ cursor:pointer;
+ font-size:1.5rem;
+}
+
+#carrito-count{
+ position:absolute;
+ top:-4px;
+ right:-4px;
+ background:#4f7df3;
+ color:white;
+ width:20px;
+ height:20px;
+ border-radius:50%;
+ font-size:12px;
+ display:none;
+ align-items:center;
+ justify-content:center;
+}
+
+#carrito-count.visible{
+ display:flex;
+}
+
+
+#carrito-overlay{
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.4);
+ z-index:9001;
+ display:none;
+}
+
+
+#carrito-overlay.open{
+ display:block;
+}
+
+
+#carrito-drawer{
+ position:fixed;
+ top:0;
+ right:-420px;
+ width:420px;
+ max-width:100%;
+ height:100vh;
+ background:white;
+ z-index:9002;
+ transition:.3s;
+ display:flex;
+ flex-direction:column;
+}
+
+
+#carrito-drawer.open{
+ right:0;
+}
+
+
+.cdr-header{
+ padding:20px;
+ display:flex;
+ justify-content:space-between;
+ border-bottom:1px solid #ddd;
+}
+
+
+.cdr-items{
+ flex:1;
+ overflow:auto;
+ padding:20px;
+}
+
+
+.cdr-item{
+ display:flex;
+ gap:10px;
+ align-items:center;
+ padding:10px 0;
+ border-bottom:1px solid #eee;
+}
+
+
+.cdr-footer{
+ padding:20px;
+ border-top:1px solid #ddd;
+}
+
+
+.cdr-checkout-btn{
+ width:100%;
+ padding:15px;
+ background:#111827;
+ color:white;
+ border:none;
+ border-radius:10px;
+ cursor:pointer;
+}
+
+
+#cdr-toast{
+ position:fixed;
+ bottom:80px;
+ right:30px;
+ background:#111827;
+ color:white;
+ padding:12px 20px;
+ border-radius:10px;
+ display:none;
+ z-index:9999;
+}
+
+#cdr-toast.show{
+ display:block;
+}
+
+</style>
+
+
+
+<button id="carrito-fab" onclick="carritoAbrir()">
+
+🛒
+
+<span id="carrito-count"></span>
+
+</button>
+
+
+<div id="carrito-overlay" onclick="carritoCerrar()"></div>
+
+
+<div id="carrito-drawer">
+
+
+<div class="cdr-header">
+
+<b>🛒 Mi carrito</b>
+
+<button onclick="carritoCerrar()">X</button>
+
+</div>
+
+
+
+<div id="cdr-items" class="cdr-items"></div>
+
+
+
+<div class="cdr-footer">
+
+
+<div>
+
+Total:
+
+<b id="cdr-total">$0</b>
+
+</div>
+
+
+
+{% if session.get('usuario_id') %}
+
+<button 
+class="cdr-checkout-btn"
+onclick="carritoCheckout()">
+
+🔒 Pagar con Mercado Pago
+
+</button>
+
+
+{% else %}
+
+<button 
+class="cdr-checkout-btn"
+onclick="location.href='/login'">
+
+👤 Iniciar sesión
+
+</button>
+
+{% endif %}
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+<div id="cdr-toast">
+
+<span id="cdr-toast-text">
+Producto agregado
+</span>
+
+</div>
+
+
+
+
+
 <script>
 
-let carrito = JSON.parse(localStorage.getItem('pm_carrito') || '[]');
 
-
-// GUARDAR
-function carritoGuardar() {
-    localStorage.setItem(
-        'pm_carrito',
-        JSON.stringify(carrito)
-    );
-}
+let carrito = JSON.parse(
+localStorage.getItem('pm_carrito') || '[]'
+);
 
 
 
-// AGREGAR PRODUCTO
-function agregarAlCarrito(id_producto, nombre, precio, stock) {
+function carritoGuardar(){
 
-    const existe = carrito.find(
-        item => item.id_producto === id_producto
-    );
-
-
-    if (existe) {
-
-        if (existe.cantidad >= stock) {
-
-            carritoToast('⚠️ Sin más stock disponible');
-            return;
-
-        }
-
-
-        existe.cantidad++;
-
-    } else {
-
-
-        carrito.push({
-
-            id_producto: id_producto,
-
-            nombre: nombre,
-
-            precio: Number(precio),
-
-            cantidad: 1,
-
-            stock: stock
-
-        });
-
-    }
-
-
-    carritoGuardar();
-
-    carritoRender();
-
-    carritoToast(
-        '✅ ' + nombre + ' agregado'
-    );
+localStorage.setItem(
+'pm_carrito',
+JSON.stringify(carrito)
+);
 
 }
 
 
 
 
-
-// CAMBIAR CANTIDAD
-function carritoSetCantidad(id_producto, cambio) {
-
-
-    const item = carrito.find(
-        i => i.id_producto === id_producto
-    );
+function agregarAlCarrito(
+id_producto,
+nombre,
+precio,
+stock
+){
 
 
-    if (!item) return;
-
-
-
-    item.cantidad += cambio;
+let existe = carrito.find(
+p => p.id_producto === id_producto
+);
 
 
 
-    if (item.cantidad <= 0) {
+if(existe){
+
+ if(existe.cantidad < stock){
+
+ existe.cantidad++;
+
+ }
+
+}else{
 
 
-        carrito =
-        carrito.filter(
-            i => i.id_producto !== id_producto
-        );
+carrito.push({
 
+id_producto:id_producto,
 
-    }
+nombre:nombre,
 
+precio:precio,
 
-    if (item.cantidad > item.stock) {
+cantidad:1,
 
-        item.cantidad = item.stock;
+stock:stock
 
-    }
+});
 
-
-    carritoGuardar();
-
-    carritoRender();
 
 }
 
 
 
+carritoGuardar();
 
-// ELIMINAR
-function carritoRemove(id_producto) {
+carritoRender();
 
+carritoToast(
+"✅ "+nombre+" agregado"
+);
 
-    carrito =
-    carrito.filter(
-        i => i.id_producto !== id_producto
-    );
-
-
-    carritoGuardar();
-
-    carritoRender();
 
 }
 
@@ -132,286 +298,116 @@ function carritoRemove(id_producto) {
 
 
 
-// VACIAR
-function carritoClear(){
 
-    carrito=[];
-
-    carritoGuardar();
-
-    carritoRender();
-
-}
-
-
-
-
-// MOSTRAR CARRITO
 function carritoRender(){
 
 
-    const container =
-    document.getElementById('cdr-items');
+let lista=document.getElementById(
+'cdr-items'
+);
 
 
-    const count =
-    document.getElementById('carrito-count');
+let count=document.getElementById(
+'carrito-count'
+);
 
 
-    const total =
-    document.getElementById('cdr-total');
+let total=document.getElementById(
+'cdr-total'
+);
 
 
 
-    const cantidad =
-    carrito.reduce(
-        (s,i)=>s+i.cantidad,
-        0
-    );
+let cantidad=carrito.reduce(
+(a,b)=>a+b.cantidad,
+0
+);
 
 
 
-    const precio =
-    carrito.reduce(
-        (s,i)=>s+(i.precio*i.cantidad),
-        0
-    );
+let suma=carrito.reduce(
+(a,b)=>a+(b.precio*b.cantidad),
+0
+);
 
 
 
-    count.textContent=cantidad;
+count.textContent=cantidad;
 
 
-    count.classList.toggle(
-        'visible',
-        cantidad>0
-    );
+count.classList.toggle(
+'visible',
+cantidad>0
+);
 
 
 
-    total.textContent =
-    '$'+precio.toLocaleString('es-CL');
+total.textContent=
+"$"+suma.toLocaleString('es-CL');
 
 
 
+if(carrito.length===0){
 
-    if(carrito.length===0){
+lista.innerHTML=
+"Carrito vacío";
 
-
-        container.innerHTML=`
-
-        <div class="cdr-empty">
-
-            <div class="cdr-empty-icon">
-            🛒
-            </div>
-
-            <p>
-            Tu carrito está vacío
-            </p>
-
-        </div>
-
-        `;
-
-        return;
-
-    }
-
-
-
-
-    container.innerHTML = carrito.map(item=>`
-
-    <div class="cdr-item">
-
-
-        <div class="cdr-item-img">
-        🛋️
-        </div>
-
-
-
-        <div class="cdr-item-info">
-
-
-            <div class="cdr-item-name">
-
-            ${item.nombre}
-
-            </div>
-
-
-
-            <div class="cdr-item-price">
-
-            $${item.precio.toLocaleString('es-CL')}
-
-            </div>
-
-
-        </div>
-
-
-
-
-        <div class="cdr-qty">
-
-
-            <button
-            class="cdr-qty-btn"
-            onclick="carritoSetCantidad(${item.id_producto},-1)">
-            -
-            </button>
-
-
-
-            <span class="cdr-qty-num">
-
-            ${item.cantidad}
-
-            </span>
-
-
-
-
-            <button
-            class="cdr-qty-btn"
-            onclick="carritoSetCantidad(${item.id_producto},1)">
-            +
-            </button>
-
-
-        </div>
-
-
-
-        <button
-        class="cdr-remove"
-        onclick="carritoRemove(${item.id_producto})">
-
-        ✕
-
-        </button>
-
-
-    </div>
-
-
-    `).join('');
+return;
 
 }
 
 
 
+lista.innerHTML=carrito.map(item=>`
 
 
-// CHECKOUT MERCADO PAGO
-async function carritoCheckout(){
+<div class="cdr-item">
 
 
-    if(carrito.length===0){
+<div>
 
-        carritoToast(
-        '⚠️ Carrito vacío'
-        );
+<b>${item.nombre}</b>
 
-        return;
+<br>
 
-    }
+$${item.precio.toLocaleString('es-CL')}
 
 
+</div>
 
 
-    try{
+<div>
 
 
-        const res = await fetch(
-            '/carrito/checkout',
-            {
-
-            method:'POST',
-
-            headers:{
-
-                'Content-Type':
-                'application/json'
-
-            },
+<button onclick="cantidadProducto(${item.id_producto},-1)">
+-
+</button>
 
 
-            body:JSON.stringify({
-
-                items: carrito.map(item=>({
-
-                    id_producto:
-                    item.id_producto,
+${item.cantidad}
 
 
-                    nombre:
-                    item.nombre,
+<button onclick="cantidadProducto(${item.id_producto},1)">
++
+</button>
 
 
-                    precio:
-                    item.precio,
+<button onclick="eliminarProducto(${item.id_producto})">
+
+❌
+
+</button>
 
 
-                    cantidad:
-                    item.cantidad
-
-                }))
-
-            })
-
-
-        });
+</div>
 
 
 
-        const data =
-        await res.json();
+</div>
 
 
+`).join('');
 
-
-        if(data.checkout_url){
-
-
-            carrito=[];
-
-            carritoGuardar();
-
-
-            window.location.href =
-            data.checkout_url;
-
-
-        }
-        else{
-
-
-            carritoToast(
-            '❌ '+data.error
-            );
-
-
-        }
-
-
-
-    }
-    catch(error){
-
-
-        console.log(error);
-
-
-        carritoToast(
-        '❌ Error de conexión'
-        );
-
-
-    }
 
 
 }
@@ -420,80 +416,214 @@ async function carritoCheckout(){
 
 
 
-// ABRIR
+function cantidadProducto(id,cambio){
+
+
+let item=carrito.find(
+p=>p.id_producto===id
+);
+
+
+if(!item)return;
+
+
+item.cantidad+=cambio;
+
+
+
+if(item.cantidad<=0){
+
+carrito=carrito.filter(
+p=>p.id_producto!==id
+);
+
+}
+
+
+carritoGuardar();
+
+carritoRender();
+
+
+}
+
+
+
+
+
+
+
+function eliminarProducto(id){
+
+
+carrito=carrito.filter(
+p=>p.id_producto!==id
+);
+
+
+carritoGuardar();
+
+carritoRender();
+
+
+}
+
+
+
+
+
+
 function carritoAbrir(){
 
-document
-.getElementById('carrito-overlay')
-.classList.add('open');
+document.getElementById(
+'carrito-overlay'
+).classList.add('open');
 
 
-document
-.getElementById('carrito-drawer')
-.classList.add('open');
+document.getElementById(
+'carrito-drawer'
+).classList.add('open');
+
 
 }
 
 
 
 
-
-// CERRAR
 function carritoCerrar(){
 
+document.getElementById(
+'carrito-overlay'
+).classList.remove('open');
 
-document
-.getElementById('carrito-overlay')
-.classList.remove('open');
 
-
-document
-.getElementById('carrito-drawer')
-.classList.remove('open');
+document.getElementById(
+'carrito-drawer'
+).classList.remove('open');
 
 
 }
 
 
-
-
-
-// MENSAJE
-let toastTimer;
 
 
 function carritoToast(msg){
 
+let t=document.getElementById(
+'cdr-toast'
+);
 
-const el =
-document.getElementById('cdr-toast');
 
-
-document.getElementById(
+let texto=document.getElementById(
 'cdr-toast-text'
-).textContent=msg;
+);
 
 
 
-el.classList.add('show');
+texto.textContent=msg;
 
 
-
-clearTimeout(toastTimer);
-
+t.classList.add('show');
 
 
-toastTimer=setTimeout(()=>{
+setTimeout(()=>{
 
+t.classList.remove('show');
 
-el.classList.remove('show');
-
-
-},2500);
-
+},2000);
 
 
 }
+
+
+
+
+
+
+
+async function carritoCheckout(){
+
+
+if(carrito.length===0){
+
+carritoToast(
+"Carrito vacío"
+);
+
+return;
+
+}
+
+
+
+let res=await fetch(
+'/carrito/checkout',
+{
+
+
+method:'POST',
+
+
+headers:{
+
+'Content-Type':'application/json'
+
+},
+
+
+body:JSON.stringify({
+
+items:carrito.map(item=>({
+
+id_producto:item.id_producto,
+
+nombre:item.nombre,
+
+precio:item.precio,
+
+cantidad:item.cantidad
+
+
+}))
+
+
+})
+
+
+});
+
+
+
+let data=await res.json();
+
+
+
+if(data.checkout_url){
+
+
+localStorage.removeItem(
+'pm_carrito'
+);
+
+
+window.location.href=
+data.checkout_url;
+
+
+
+}else{
+
+
+carritoToast(
+data.error || "Error"
+);
+
+
+}
+
+
+}
+
 
 
 
