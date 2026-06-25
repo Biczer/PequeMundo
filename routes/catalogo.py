@@ -16,6 +16,6 @@ def catalogo():
             Producto.categoria == categoria
         )
 
-    productos = query.all()
+    producto = query.all()
 
-    return render_template("catalogo.html", productos=productos)
+    return render_template("catalogo.html", producto=producto)
