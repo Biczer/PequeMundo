@@ -1,7 +1,7 @@
 from extensions import db
 
 class Producto(db.Model):
-    __tablename__ = 'productos'
+    __tablename__ = 'producto'
 
     id_producto = db.Column(db.Integer, primary_key=True)
 
