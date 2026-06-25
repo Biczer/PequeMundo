@@ -71,13 +71,13 @@
       <!-- Las categorías se agregan dinámicamente desde la API -->
     </nav>
 
-    <!-- Grid de productos -->
+    <!-- Grid de producto -->
     <section class="product-grid" id="productGrid">
-      <p class="catalog-empty" id="loadingMsg">Cargando productos...</p>
+      <p class="catalog-empty" id="loadingMsg">Cargando producto...</p>
     </section>
 
     <p class="catalog-empty" id="emptyMsg" style="display:none;">
-      No hay productos disponibles en esta categoría.
+      No hay producto disponibles en esta categoría.
     </p>
 
   </main>
@@ -106,10 +106,10 @@
   <script>
     const IMG_BASE   = "{{ url_for('static', filename='img/') }}";
     const IMG_FALLBACK = "{{ url_for('static', filename='img/peque-mueble.webp') }}";
-    const API_URL    = "{{ url_for('api.api_productos') }}";
+    const API_URL    = "{{ url_for('api.api_producto') }}";
     const CAT_URL    = "{{ url_for('api.api_categorias') }}";
 
-    let todosLosProductos = [];
+    let todosLosproducto = [];
     let catActual = '';
 
     // ── Carga inicial ─────────────────────────────────────────────
@@ -119,14 +119,14 @@
           fetch(API_URL),
           fetch(CAT_URL)
         ]);
-        todosLosProductos = await resProd.json();
+        todosLosproducto = await resProd.json();
         const categorias  = await resCat.json();
 
         construirCategoriasNav(categorias);
-        renderProductos(todosLosProductos);
+        renderproducto(todosLosproducto);
       } catch (err) {
         document.getElementById('loadingMsg').textContent =
-          '⚠️ Error al cargar productos. Intenta recargar la página.';
+          '⚠️ Error al cargar producto. Intenta recargar la página.';
       }
     }
 
@@ -154,7 +154,7 @@
     // ── Filtrado ─────────────────────────────────────────────────
     function filtrar() {
       const texto = document.getElementById('buscador').value.toLowerCase().trim();
-      const filtrados = todosLosProductos.filter(p => {
+      const filtrados = todosLosproducto.filter(p => {
         const matchCat  = !catActual || p.categoria === catActual;
         const matchText = !texto ||
           p.nombre.toLowerCase().includes(texto) ||
@@ -162,11 +162,11 @@
           p.categoria.toLowerCase().includes(texto);
         return matchCat && matchText;
       });
-      renderProductos(filtrados);
+      renderproducto(filtrados);
     }
 
     // ── Render de tarjetas ────────────────────────────────────────
-    function renderProductos(lista) {
+    function renderproducto(lista) {
       const grid   = document.getElementById('productGrid');
       const empty  = document.getElementById('emptyMsg');
       const loading = document.getElementById('loadingMsg');
