@@ -3,7 +3,6 @@ import mysql.connector
 from flask import Flask, jsonify, request
 from database.conexion import get_connection
 
-app = Flask(__name__)
 
 
 @app.get("/api/producto")
