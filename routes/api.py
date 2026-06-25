@@ -10,9 +10,9 @@ api_bp = Blueprint('api', __name__)
 def api_producto():
     categoria = request.args.get('categoria', '').strip()
     if categoria:
-        lista = Producto.query.filter_by(categoria=categoria, estado='Activo').order_by(Producto.id).all()
+        lista = Producto.query.filter_by(categoria=categoria, estado='Activo').order_by(Producto.id_producto).all()
     else:
-        lista = Producto.query.filter_by(estado='Activo').order_by(Producto.id).all()
+        lista = Producto.query.filter_by(estado='Activo').order_by(Producto.id_producto).all()
     return jsonify([{
         'id': p.id, 'nombre': p.nombre, 'descripcion': p.descripcion,
         'imagen': p.imagen, 'categoria': p.categoria,
