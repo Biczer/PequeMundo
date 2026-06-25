@@ -61,9 +61,15 @@ def checkout_json():
 
 
     usuario = db.session.get(
-        usuario,
-        session['id_usuario']
+    Usuario,
+    session.get('usuario_id')
     )
+
+
+    if not usuario:
+        return jsonify({
+            "error": "Usuario no encontrado"
+        }),400
 
 
     total = sum(
