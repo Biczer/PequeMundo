@@ -9,7 +9,7 @@ admin_bp = Blueprint('admin', __name__)
 @admin_bp.route('/admin')
 @requiere_admin
 def dashboard():
-    productos = Producto.query.all()
+    producto = Producto.query.all()
     pedidos = Pedido.query.all()
     usuarios = Usuario.query.all()
     return render_template('dashboard.html', productos=productos, pedidos=pedidos, usuarios=usuarios)
@@ -23,8 +23,8 @@ def admin_dashboard():
 
 @admin_bp.route('/admin/productos')
 @requiere_admin
-def productos():
-    productos = Producto.query.all()
+def producto():
+    producto = Producto.query.all()
     return render_template('productos.html', productos=productos)
 
 
