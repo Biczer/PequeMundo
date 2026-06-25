@@ -218,7 +218,7 @@ def mis_pedidos():
 
     usuario = db.session.get(
         Usuario,
-        session['usuario_id']
+        session['id_usuario']
     )
 
 
