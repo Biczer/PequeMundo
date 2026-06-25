@@ -8,7 +8,7 @@ def create_app():
 
     db.init_app(app)
 
-    
+    from routes.catalogo import catalogo_bp
     from routes.auth import auth_bp
     from routes.publico import publico_bp
     from routes.carrito import carrito_bp
@@ -18,6 +18,7 @@ def create_app():
     from routes.mp import mp_bp
     from routes.api import api_bp
 
+    app.register_blueprint(catalogo_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(publico_bp)
     app.register_blueprint(carrito_bp)
