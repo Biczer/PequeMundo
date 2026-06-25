@@ -1,15 +1,15 @@
 [
   {
-    "id": 1,
+    "id_producto": 1,
     "nombre": "Cuna Clásica",
     "categoria": "Cunas",
-    "descripcion": "Cuna de madera sólida con barandas ajustables, diseño clásico y seguro para recién nacidos.",
+    "descripcion": "Cuna de madera sólid_productoa con barandas ajustables, diseño clásico y seguro para recién nacid_productoos.",
     "precio": 129990,
     "stock": 8,
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 2,
+    "id_producto": 2,
     "nombre": "Cuna Convertible 3 en 1",
     "categoria": "Cunas",
     "descripcion": "Se transforma de cuna a cama de niño y luego a sofá. Inversión para varios años.",
@@ -18,52 +18,52 @@
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 3,
+    "id_producto": 3,
     "nombre": "Cuna Viajera Plegable",
     "categoria": "Cunas",
-    "descripcion": "Ligera y plegable, ideal para viajes y visitas. Incluye colchoneta y bolso de transporte.",
+    "descripcion": "Ligera y plegable, id_productoeal para viajes y visitas. Incluye colchoneta y bolso de transporte.",
     "precio": 79990,
     "stock": 12,
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 4,
-    "nombre": "Cama Individual Infantil",
+    "id_producto": 4,
+    "nombre": "Cama Individ_productoual Infantil",
     "categoria": "Camas",
-    "descripcion": "Cama con barandas de seguridad laterales, para niños de 2 a 8 años. Madera de pino.",
+    "descripcion": "Cama con barandas de segurid_productoad laterales, para niños de 2 a 8 años. Madera de pino.",
     "precio": 149990,
     "stock": 6,
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 5,
+    "id_producto": 5,
     "nombre": "Cama Litera Doble",
     "categoria": "Camas",
-    "descripcion": "Litera de dos plazas con escalera integrada y barandas de seguridad. Perfecta para hermanos.",
+    "descripcion": "Litera de dos plazas con escalera integrada y barandas de segurid_productoad. Perfecta para hermanos.",
     "precio": 249990,
     "stock": 3,
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 6,
+    "id_producto": 6,
     "nombre": "Cama con Cajones",
     "categoria": "Camas",
-    "descripcion": "Cama individual con dos cajones de almacenamiento incorporados bajo el somier.",
+    "descripcion": "Cama individ_productoual con dos cajones de almacenamiento incorporados bajo el somier.",
     "precio": 179990,
     "stock": 5,
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 7,
+    "id_producto": 7,
     "nombre": "Cómoda 3 Cajones",
     "categoria": "Cómodas",
-    "descripcion": "Cómoda compacta con tres amplios cajones, ideal para guardar ropa de bebé o niño pequeño.",
+    "descripcion": "Cómoda compacta con tres amplios cajones, id_productoeal para guardar ropa de bebé o niño pequeño.",
     "precio": 99990,
     "stock": 9,
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 8,
+    "id_producto": 8,
     "nombre": "Cómoda Cambiador",
     "categoria": "Cómodas",
     "descripcion": "Cómoda con superficie superior acolchada para cambio de pañales y 4 cajones de almacenamiento.",
@@ -72,16 +72,16 @@
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 9,
+    "id_producto": 9,
     "nombre": "Cómoda Alta 5 Cajones",
     "categoria": "Cómodas",
-    "descripcion": "Cómoda de mayor capacidad con 5 cajones. Anclaje de pared incluido para mayor seguridad.",
+    "descripcion": "Cómoda de mayor capacid_productoad con 5 cajones. Anclaje de pared incluid_productoo para mayor segurid_productoad.",
     "precio": 119990,
     "stock": 7,
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 10,
+    "id_producto": 10,
     "nombre": "Escritorio Infantil",
     "categoria": "Escritorios",
     "descripcion": "Escritorio con cajón lateral y estante para libros. Altura ajustable según el crecimiento del niño.",
@@ -90,7 +90,7 @@
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 11,
+    "id_producto": 11,
     "nombre": "Escritorio Esquinero",
     "categoria": "Escritorios",
     "descripcion": "Diseño en L para aprovechar esquinas. Amplia superficie de trabajo y estantes superiores.",
@@ -99,7 +99,7 @@
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 12,
+    "id_producto": 12,
     "nombre": "Escritorio con Estante",
     "categoria": "Escritorios",
     "descripcion": "Escritorio con estante alto integrado para libros, útiles y decoración infantil.",
@@ -108,7 +108,7 @@
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 13,
+    "id_producto": 13,
     "nombre": "Silla Regulable de Estudio",
     "categoria": "Sillas",
     "descripcion": "Silla ergonómica con altura regulable, respaldo lumbar y apoyabrazos. Para niños desde 4 años.",
@@ -117,25 +117,25 @@
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 14,
+    "id_producto": 14,
     "nombre": "Silla de Alimentación",
     "categoria": "Sillas",
-    "descripcion": "Trona alta con bandeja extraíble, cinturón de seguridad y respaldo reclinable en 3 posiciones.",
+    "descripcion": "Trona alta con bandeja extraíble, cinturón de segurid_productoad y respaldo reclinable en 3 posiciones.",
     "precio": 69990,
     "stock": 8,
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 15,
+    "id_producto": 15,
     "nombre": "Silla Mecedora Infantil",
     "categoria": "Sillas",
-    "descripcion": "Pequeña mecedora de madera maciza, ideal para la habitación del bebé. Diseño atemporal.",
+    "descripcion": "Pequeña mecedora de madera maciza, id_productoeal para la habitación del bebé. Diseño atemporal.",
     "precio": 49990,
     "stock": 0,
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 16,
+    "id_producto": 16,
     "nombre": "Clóset 2 Puertas",
     "categoria": "Clósets",
     "descripcion": "Armario de dos puertas con barra para colgar ropa, estante superior e interior divisorio.",
@@ -144,16 +144,16 @@
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 17,
+    "id_producto": 17,
     "nombre": "Clóset 3 Cuerpos",
     "categoria": "Clósets",
-    "descripcion": "Gran capacidad de almacenamiento con 3 módulos, espejo central y cajones inferiores incluidos.",
+    "descripcion": "Gran capacid_productoad de almacenamiento con 3 módulos, espejo central y cajones inferiores incluid_productoos.",
     "precio": 319990,
     "stock": 2,
     "imagen": "peque-mueble.webp"
   },
   {
-    "id": 18,
+    "id_producto": 18,
     "nombre": "Clóset Organizador Abierto",
     "categoria": "Clósets",
     "descripcion": "Sistema de organización abierto con cubos modulares, perfecto para cuartos de juego y ropa.",
