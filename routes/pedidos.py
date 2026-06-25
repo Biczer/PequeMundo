@@ -588,7 +588,7 @@ def pago_procesar():
 
                 Producto,
 
-                item.get('id')
+                item.get('id_producto')
 
             )
 
