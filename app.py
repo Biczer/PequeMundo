@@ -1,18 +1,3 @@
-import os
-import json
-from flask import Flask
-from config import Config
-from extensions import db
-from routes.auth import auth_bp
-from routes.publico import publico_bp
-from routes.carrito import carrito_bp
-from routes.pedidos import pedidos_bp
-from routes.admin import admin_bp
-from routes.vendedor import vendedor_bp
-from routes.mp import mp_bp
-from routes.api import api_bp
-
-
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -28,6 +13,20 @@ def create_app():
     app.register_blueprint(mp_bp)
     app.register_blueprint(api_bp)
 
+    @app.route("/env")
+    def env():
+        return os.getenv("TEST", "NO")
+
+    from sqlalchemy import text
+
+    @app.route("/testdb")
+    def testdb():
+        try:
+            db.session.execute(text("SELECT 1"))
+            return "Conexión OK"
+        except Exception as e:
+            return str(e)
+
     @app.template_filter('from_json')
     def from_json_filter(value):
         try:
@@ -36,10 +35,3 @@ def create_app():
             return []
 
     return app
-
-
-app = create_app()
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
