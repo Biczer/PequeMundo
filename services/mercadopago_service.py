@@ -2,20 +2,28 @@ import os
 import mercadopago
 
 
-MP_ACCESS_TOKEN = os.environ.get("MP_ACCESS_TOKEN")
+MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
 
 
 if not MP_ACCESS_TOKEN:
     raise Exception(
-        "Falta configurar MP_ACCESS_TOKEN en variables de entorno"
+        "Falta configurar MP_ACCESS_TOKEN en variables de entorno de Render"
     )
 
 
-sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
+sdk = mercadopago.SDK(
+    MP_ACCESS_TOKEN
+)
 
 
 
-def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base_url):
+def crear_preferencia(
+    items_list,
+    cliente_nombre,
+    cliente_email,
+    pedido_id,
+    base_url
+):
 
 
     mp_items = []
@@ -29,9 +37,13 @@ def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base
 
             "title": i.get("nombre"),
 
-            "quantity": int(i.get("cantidad", 1)),
+            "quantity": int(
+                i.get("cantidad", 1)
+            ),
 
-            "unit_price": int(i.get("precio", 0)),
+            "unit_price": int(
+                i.get("precio", 0)
+            ),
 
             "currency_id": "CLP"
 
@@ -66,13 +78,16 @@ def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base
         },
 
 
-        "notification_url": f"{base_url}/mp/webhook",
+        "notification_url":
+            f"{base_url}/mp/webhook",
 
 
-        "external_reference": str(pedido_id),
+        "external_reference":
+            str(pedido_id),
 
 
-        "auto_return": "approved"
+        "auto_return":
+            "approved"
 
     }
 
