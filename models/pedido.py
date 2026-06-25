@@ -6,9 +6,10 @@ class Pedido(db.Model):
     __tablename__ = 'pedido'
 
 
-    id_usuario = db.Column(
+    id = db.Column(
         db.Integer,
-        primary_key=True
+        primary_key=True,
+        autoincrement=True
     )
 
 
@@ -39,7 +40,7 @@ class Pedido(db.Model):
 
     vendedor_id = db.Column(
         db.Integer,
-        db.ForeignKey('usuario.id_usuario'),
+        db.ForeignKey('usuarios.id_usuario'),
         nullable=True
     )
 
