@@ -46,26 +46,22 @@ class Pedido(db.Model):
 
 
     mp_preference_id = db.Column(
-        db.String(200),
-        nullable=True
+        db.String(200)
     )
 
 
     mp_payment_id = db.Column(
-        db.String(200),
-        nullable=True
+        db.String(200)
     )
 
 
     mp_status = db.Column(
-        db.String(50),
-        nullable=True
+        db.String(50)
     )
 
 
     items_json = db.Column(
-        db.Text,
-        nullable=True
+        db.Text
     )
 
 
