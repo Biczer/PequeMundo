@@ -14,11 +14,11 @@ def listar_productos():
         cursor = conn.cursor(dictionary=True)
         if categoria:
             cursor.execute(
-                "SELECT * FROM producto WHERE categoria = %s AND estado = 'Activo' ORDER BY id",
+                "SELECT * FROM producto WHERE categoria = %s AND estado = 'Activo' ORDER BY id_producto",
                 (categoria,)
             )
         else:
-            cursor.execute("SELECT * FROM producto WHERE estado = 'Activo' ORDER BY id")
+            cursor.execute("SELECT * FROM producto WHERE estado = 'Activo' ORDER BY id_producto")
         productos = cursor.fetchall()
         cursor.close()
         conn.close()
