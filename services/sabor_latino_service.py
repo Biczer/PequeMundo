@@ -1,9 +1,9 @@
 import requests
 
-PARTNER_API_URL = "https://saborlatinochile.cl/api/productos_pequemundos_api.php"
+PARTNER_API_URL = "https://saborlatinochile.cl/api/producto_pequemundos_api.php"
 
 
-def obtener_productos(categoria=None):
+def obtener_producto(categoria=None):
     response = requests.get(PARTNER_API_URL, timeout=10)
     response.raise_for_status()
     data = response.json().get("data", [])
