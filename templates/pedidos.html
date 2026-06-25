@@ -21,7 +21,7 @@
       <tbody>
         {% for p in pedidos %}
         <tr>
-          <td class="ps-3 text-muted">#{{ p.id }}</td>
+          <td class="ps-3 text-muted">#{{ p.id_productos }}</td>
           <td>{{ p.cliente }}</td>
           <td class="fw-medium">${{ "{:,.0f}".format(p.total) }}</td>
           <td>
