@@ -10,20 +10,25 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+
         usuario = Usuario.query.filter_by(email=email).first()
-        if usuario and usuario.password == password:
-            session['usuario_id'] = usuario.id
-            session['usuario'] = usuario.nombre
+
+        if usuario and usuario.password_hash == password:
+            session['usuario_id'] = usuario.id_usuario
+            session['usuario'] = usuario.nombre_usuario
             session['rol'] = usuario.rol
-            flash(f'¡Bienvenido, {usuario.nombre}!', 'success')
+
+            flash(f'¡Bienvenido, {usuario.nombre_usuario}!', 'success')
+
             if usuario.rol == 'Admin':
                 return redirect(url_for('admin.admin_dashboard'))
             elif usuario.rol == 'Vendedor':
                 return redirect(url_for('vendedor.vendedor_dashboard'))
             else:
                 return redirect(url_for('publico.inicio'))
-        else:
-            flash('Correo o contraseña incorrectos.', 'danger')
+
+        flash('Correo o contraseña incorrectos.', 'danger')
+
     return render_template('login.html')
 
 
