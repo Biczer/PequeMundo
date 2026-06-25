@@ -3,7 +3,7 @@ from models.producto import Producto
 
 
 producto_api_bp = Blueprint(
-    "producto_api",
+    "productos_api",
     __name__
 )
 
