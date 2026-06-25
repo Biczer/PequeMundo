@@ -8,7 +8,7 @@ db = SQLAlchemy()
 
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")  # Supabase Postgres URL
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")  
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
@@ -20,17 +20,16 @@ def create_app():
 
    
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-        "pool_pre_ping": True,
-        "pool_recycle": 300,
-        "connect_args": {
-            "sslmode": "require"
+    "pool_pre_ping": True,
+    "pool_recycle": 300,
+    "connect_args": {
+        "sslmode": "require"
         }
     }
 
     db.init_app(app)
 
-    # resto de tu código...
-
+  
     
     from auth import auth_bp
     from publico import publico_bp
