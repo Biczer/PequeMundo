@@ -1,5 +1,6 @@
 def create_app():
     print("APP INICIADA")
+
     app = Flask(__name__)
     app.config.from_object(Config)
 
@@ -34,9 +35,10 @@ def create_app():
             return json.loads(value)
         except Exception:
             return []
+
     @app.route("/ping")
     def ping():
-        
-    return "PONG"
+        return "PONG"
+
     print("RUTAS CARGADAS")
     return app
