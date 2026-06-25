@@ -16,7 +16,7 @@ def create_app():
     from routes.admin import admin_bp
     from routes.vendedor import vendedor_bp
     from routes.mp import mp_bp
-    from apis.productos_api import productos_api_bp
+    from apis.producto_api import producto_api_bp
 
     app.register_blueprint(producto_api_bp)
     app.register_blueprint(catalogo_bp)
