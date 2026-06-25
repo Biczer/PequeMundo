@@ -1,13 +1,13 @@
 {% extends "vendedor_base.html" %}
 {% block titulo %}Catálogo{% endblock %}
-{% block topbar_titulo %}Catálogo de Productos{% endblock %}
+{% block topbar_titulo %}Catálogo de producto{% endblock %}
 
 {% block contenido %}
 
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
   <div>
     <h2 style="font-size:1.2rem;font-weight:700;margin:0;">Catálogo activo</h2>
-    <p style="font-size:0.8rem;color:#6b7280;margin:0;">{{ productos|length }} producto{{ 's' if productos|length != 1 else '' }} disponible{{ 's' if productos|length != 1 else '' }}</p>
+    <p style="font-size:0.8rem;color:#6b7280;margin:0;">{{ producto|length }} producto{{ 's' if producto|length != 1 else '' }} disponible{{ 's' if producto|length != 1 else '' }}</p>
   </div>
   <a href="{{ url_for('vendedor.vendedor_crear_pedido') }}" class="v-btn v-btn-primary">➕ Nuevo pedido</a>
 </div>
@@ -15,14 +15,14 @@
 <!-- Filtros -->
 <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;">
   <button onclick="filtrar('')" class="filtro-btn active" data-cat="">Todos</button>
-  {% set cats = productos | map(attribute='categoria') | unique | list %}
+  {% set cats = producto | map(attribute='categoria') | unique | list %}
   {% for cat in cats %}
   <button onclick="filtrar('{{ cat }}')" class="filtro-btn" data-cat="{{ cat }}">{{ cat }}</button>
   {% endfor %}
 </div>
 
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;" id="catalogoGrid">
-  {% for p in productos %}
+  {% for p in producto %}
   <div class="v-card producto-item" data-cat="{{ p.categoria }}" style="transition:transform 0.15s;">
     <div style="padding:1rem 1rem 0.5rem;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6rem;">
@@ -45,7 +45,7 @@
     </div>
   </div>
   {% else %}
-  <div style="grid-column:1/-1;text-align:center;padding:3rem;color:#9ca3af;">Sin productos activos disponibles.</div>
+  <div style="grid-column:1/-1;text-align:center;padding:3rem;color:#9ca3af;">Sin producto activos disponibles.</div>
   {% endfor %}
 </div>
 
