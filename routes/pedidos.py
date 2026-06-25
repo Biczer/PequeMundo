@@ -149,7 +149,7 @@ def pago_procesar():
         )
         db.session.add(nuevo_pedido)
         for item in items:
-            p = db.session.get(Producto, item['id'])
+            p = db.session.get(Producto, item['id_producto'])
             if p:
                 p.stock = max(0, p.stock - item['cantidad'])
                 if p.stock == 0:
