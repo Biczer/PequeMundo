@@ -8,15 +8,15 @@
 <div class="row g-3 mb-4">
   <div class="col-md-3">
     <div class="stat-card p-3 text-center">
-      <div class="text-muted small mb-1">Total Productos</div>
-      <div class="fs-2 fw-bold text-primary">{{ productos|length }}</div>
+      <div class="text-muted small mb-1">Total producto</div>
+      <div class="fs-2 fw-bold text-primary">{{ producto|length }}</div>
     </div>
   </div>
   <div class="col-md-3">
     <div class="stat-card p-3 text-center">
       <div class="text-muted small mb-1">Stock Bajo (≤5)</div>
       <div class="fs-2 fw-bold text-danger">
-        {{ productos | selectattr('stock', 'le', 5) | list | length }}
+        {{ producto | selectattr('stock', 'le', 5) | list | length }}
       </div>
     </div>
   </div>
@@ -34,10 +34,10 @@
   </div>
 </div>
 
-<!-- TABLA PRODUCTOS -->
+<!-- TABLA producto -->
 <div class="card border-0 shadow-sm mb-4">
   <div class="card-header bg-white d-flex justify-content-between align-items-center border-bottom">
-    <h5 class="mb-0">Productos recientes</h5>
+    <h5 class="mb-0">producto recientes</h5>
     <a href="{{ url_for('admin.agregar_producto') }}" class="btn btn-success btn-sm">+ Agregar</a>
   </div>
   <div class="card-body p-0">
@@ -54,7 +54,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for p in productos %}
+        {% for p in producto %}
         <tr>
           <td class="ps-3 text-muted">#{{ p.id }}</td>
           <td class="fw-medium">{{ p.nombre }}</td>
@@ -79,7 +79,7 @@
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="7" class="text-center text-muted py-4">No hay productos registrados.</td></tr>
+        <tr><td colspan="7" class="text-center text-muted py-4">No hay producto registrados.</td></tr>
         {% endfor %}
       </tbody>
     </table>
