@@ -107,7 +107,7 @@ def checkout_json():
 
 
         producto_id = item.get(
-            'id'
+            'id_producto'
         )
 
 
