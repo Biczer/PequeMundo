@@ -13,14 +13,14 @@ vendedor_bp = Blueprint('vendedor', __name__)
 def vendedor_dashboard():
     vendedor_id = session.get('usuario_id')
     mis_pedidos = Pedido.query.filter_by(vendedor_id=vendedor_id).all()
-    productos = Producto.query.filter_by(estado='Activo').all()
+    producto = Producto.query.filter_by(estado='Activo').all()
     total_ventas = sum(p.total for p in mis_pedidos if p.mp_status == 'approved')
     pedidos_pendientes = sum(1 for p in mis_pedidos if p.estado == 'Pendiente')
     pedidos_pagados = sum(1 for p in mis_pedidos if p.mp_status == 'approved')
     return render_template('vendedor_dashboard.html',
                            mis_pedidos=mis_pedidos,
                            todos_pedidos=Pedido.query.all(),
-                           productos=productos,
+                           producto=producto,
                            total_ventas=total_ventas,
                            pedidos_pendientes=pedidos_pendientes,
                            pedidos_pagados=pedidos_pagados)
@@ -37,8 +37,8 @@ def vendedor_pedidos():
 @vendedor_bp.route('/vendedor/catalogo')
 @requiere_vendedor
 def vendedor_catalogo():
-    productos = Producto.query.filter_by(estado='Activo').all()
-    return render_template('vendedor_catalogo.html', productos=productos)
+    producto = Producto.query.filter_by(estado='Activo').all()
+    return render_template('vendedor_catalogo.html', producto=producto)
 
 
 @vendedor_bp.route('/vendedor/estadisticas')
@@ -59,7 +59,7 @@ def vendedor_estadisticas():
 @vendedor_bp.route('/vendedor/crear_pedido', methods=['GET', 'POST'])
 @requiere_vendedor
 def vendedor_crear_pedido():
-    productos = Producto.query.filter(Producto.estado == 'Activo', Producto.stock > 0).all()
+    producto = Producto.query.filter(Producto.estado == 'Activo', Producto.stock > 0).all()
     if request.method == 'POST':
         cliente = request.form['cliente']
         cliente_email = request.form['cliente_email']
@@ -67,11 +67,11 @@ def vendedor_crear_pedido():
         try:
             items = json.loads(items_raw)
         except Exception:
-            flash('Error en los productos seleccionados.', 'danger')
-            return render_template('vendedor_crear_pedido.html', productos=productos)
+            flash('Error en los producto seleccionados.', 'danger')
+            return render_template('vendedor_crear_pedido.html', producto=producto)
         if not items:
             flash('Debes agregar al menos un producto.', 'danger')
-            return render_template('vendedor_crear_pedido.html', productos=productos)
+            return render_template('vendedor_crear_pedido.html', producto=producto)
         total = sum(i['precio'] * i['cantidad'] for i in items)
         nuevo_pedido = Pedido(
             cliente=cliente, cliente_email=cliente_email,
@@ -94,4 +94,4 @@ def vendedor_crear_pedido():
         except Exception as e:
             flash(f'Error Mercado Pago: {e}', 'danger')
             return redirect(url_for('vendedor.vendedor_pedidos'))
-    return render_template('vendedor_crear_pedido.html', productos=productos)
+    return render_template('vendedor_crear_pedido.html', producto=producto)
