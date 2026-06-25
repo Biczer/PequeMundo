@@ -12,7 +12,7 @@ def dashboard():
     producto = Producto.query.all()
     pedidos = Pedido.query.all()
     usuarios = Usuario.query.all()
-    return render_template('dashboard.html', productos=productos, pedidos=pedidos, usuarios=usuarios)
+    return render_template('dashboard.html', producto=producto, pedidos=pedidos, usuarios=usuarios)
 
 
 @admin_bp.route('/admin/panel')
@@ -21,11 +21,11 @@ def admin_dashboard():
     return redirect(url_for('admin.dashboard'))
 
 
-@admin_bp.route('/admin/productos')
+@admin_bp.route('/admin/producto')
 @requiere_admin
 def producto():
     producto = Producto.query.all()
-    return render_template('productos.html', productos=productos)
+    return render_template('producto.html', producto=producto)
 
 
 @admin_bp.route('/admin/agregar', methods=['GET', 'POST'])
@@ -44,7 +44,7 @@ def agregar_producto():
         db.session.add(nuevo)
         db.session.commit()
         flash('Producto agregado correctamente.', 'success')
-        return redirect(url_for('admin.productos'))
+        return redirect(url_for('admin.producto'))
     return render_template('agregar_producto.html')
 
 
@@ -65,7 +65,7 @@ def editar_producto(id):
         producto.estado = request.form['estado']
         db.session.commit()
         flash('Producto actualizado.', 'success')
-        return redirect(url_for('admin.productos'))
+        return redirect(url_for('admin.producto'))
     return render_template('editar_producto.html', producto=producto)
 
 
@@ -79,7 +79,7 @@ def eliminar_producto(id):
     db.session.delete(producto)
     db.session.commit()
     flash('Producto eliminado.', 'success')
-    return redirect(url_for('admin.productos'))
+    return redirect(url_for('admin.producto'))
 
 
 @admin_bp.route('/admin/pedidos')
