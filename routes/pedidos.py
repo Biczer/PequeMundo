@@ -11,11 +11,8 @@ from flask import (
 )
 
 from extensions import db
-
 from models import Producto, Usuario, Pedido
-
 from decorators import requiere_cliente
-
 from services.mercadopago_service import crear_preferencia
 
 
@@ -26,7 +23,6 @@ COSTO_RM = 9990
 COSTO_REGION = 14990
 
 
-
 def _costos(entrega):
 
     mapa = {
@@ -35,54 +31,32 @@ def _costos(entrega):
         'retiro': 0
     }
 
-    return mapa.get(
-        entrega,
-        COSTO_RM
-    )
+    return mapa.get(entrega, COSTO_RM)
 
 
 
-
+# ==============================
+# CHECKOUT MERCADO PAGO
+# ==============================
 
 @pedidos_bp.route('/carrito/checkout', methods=['POST'])
 def checkout_json():
 
-
     if not session.get('usuario_id'):
-
         return jsonify({
             'error': 'Debes iniciar sesión para comprar.'
         }), 401
 
 
+    data = request.get_json(silent=True) or {}
 
-    if session.get('rol') == 'Vendedor':
-
-        return jsonify({
-            'error': 'Los vendedores no pueden comprar.'
-        }), 403
-
-
-
-    data = request.get_json(
-        silent=True
-    ) or {}
-
-
-
-    items = data.get(
-        'items',
-        []
-    )
-
+    items = data.get('items', [])
 
 
     if not items:
-
         return jsonify({
             'error': 'Carrito vacío'
-        }), 400
-
+        }),400
 
 
 
@@ -92,23 +66,26 @@ def checkout_json():
     )
 
 
-
     total = sum(
-        item['precio'] * item['cantidad']
-        for item in items
+        i['precio'] * i['cantidad']
+        for i in items
     )
 
 
 
-
-    # VALIDAR STOCK
+    # VALIDAR PRODUCTOS
 
     for item in items:
 
+        producto_id = item.get('id_producto')
 
-        producto_id = item.get(
-            'id_producto'
-        )
+
+        if not producto_id:
+
+            return jsonify({
+                'error':'Producto sin id_producto'
+            }),400
+
 
 
         producto = db.session.get(
@@ -117,22 +94,20 @@ def checkout_json():
         )
 
 
-
         if not producto:
 
             return jsonify({
-                'error': f"Producto no encontrado"
-            }), 400
+                'error':'Producto no encontrado'
+            }),400
 
 
 
         if producto.stock < item['cantidad']:
 
             return jsonify({
-                'error': f"Stock insuficiente para {producto.nombre}"
-            }), 400
-
-
+                'error':
+                f'Stock insuficiente para {producto.nombre}'
+            }),400
 
 
 
@@ -155,15 +130,9 @@ def checkout_json():
 
 
 
-    db.session.add(
-        nuevo_pedido
-    )
-
+    db.session.add(nuevo_pedido)
 
     db.session.commit()
-
-
-
 
 
 
@@ -177,7 +146,6 @@ def checkout_json():
         )
 
 
-
         preference = crear_preferencia(
 
             items,
@@ -186,7 +154,7 @@ def checkout_json():
 
             usuario.email,
 
-            nuevo_pedido.id,
+            nuevo_pedido.id_usuario,
 
             base
 
@@ -202,70 +170,40 @@ def checkout_json():
             db.session.commit()
 
 
-
-            checkout_url = (
-
-                preference.get("sandbox_init_point")
-
-                or preference.get("init_point")
-
-            )
-
-
-
             return jsonify({
 
-                'checkout_url': checkout_url
+                "checkout_url":
+                preference.get("sandbox_init_point")
+                or preference.get("init_point")
 
             })
 
 
 
-
-        db.session.delete(
-            nuevo_pedido
-        )
-
-
-        db.session.commit()
-
-
-
         return jsonify({
-
-            'error': 'Mercado Pago no respondió correctamente',
-
-            'detalle': preference
-
-        }), 500
-
-
+            "error":"Mercado Pago no respondió",
+            "detalle":preference
+        }),500
 
 
 
     except Exception as e:
 
 
-        db.session.delete(
-            nuevo_pedido
-        )
-
-
-        db.session.commit()
-
-
+        db.session.rollback()
 
         return jsonify({
-
-            'error': str(e)
-
-        }), 500
+            "error":str(e)
+        }),500
 
 
 
 
 
 
+# ==============================
+# MIS PEDIDOS
+# ==============================
 
 @pedidos_bp.route('/mis-pedidos')
 @requiere_cliente
@@ -278,47 +216,36 @@ def mis_pedidos():
     )
 
 
-
     pedidos = Pedido.query.filter_by(
-
         cliente_email=usuario.email
-
     ).order_by(
-
-        Pedido.id.desc()
-
+        Pedido.id_usuario.desc()
     ).all()
 
 
 
     return render_template(
-
         'mis_pedidos.html',
-
         pedidos=pedidos
-
     )
 
 
 
 
 
-
-
+# ==============================
+# CHECKOUT DATOS ENVIO
+# ==============================
 
 @pedidos_bp.route('/checkout', methods=['GET','POST'])
 def checkout():
 
 
-    items = session.get(
-        'carrito',
-        []
-    )
+    items = session.get('carrito',[])
 
 
 
     if not items:
-
         return redirect(
             url_for('carrito.carrito')
         )
@@ -331,53 +258,37 @@ def checkout():
     )
 
 
-
     subtotal = sum(
-
         i['precio'] * i['cantidad']
-
         for i in items
-
     )
 
 
-
-    envio = _costos(
-        entrega
-    )
-
+    envio = _costos(entrega)
 
 
     total = subtotal + envio
 
 
 
-
     if request.method == 'POST':
 
 
-        session['datos_envio'] = {
+        session['datos_envio']={
 
-            'nombre': request.form.get('nombre',''),
+            'nombre':request.form.get('nombre'),
 
-            'email': request.form.get('email',''),
+            'email':request.form.get('email'),
 
-            'telefono': request.form.get('telefono',''),
+            'telefono':request.form.get('telefono'),
 
-            'calle': request.form.get('calle',''),
+            'calle':request.form.get('calle'),
 
-            'depto': request.form.get('depto',''),
+            'comuna':request.form.get('comuna'),
 
-            'comuna': request.form.get('comuna',''),
-
-            'region': request.form.get('region','')
+            'region':request.form.get('region')
 
         }
-
-
-
-        session.modified = True
-
 
 
         return redirect(
@@ -386,95 +297,13 @@ def checkout():
 
 
 
-
-
     return render_template(
-
         'checkout.html',
-
         items=items,
-
         subtotal=subtotal,
-
         envio=envio,
-
         total=total,
-
-        entrega=entrega,
-
-        usuario=session.get(
-            'usuario',
-            ''
-        )
-
-    )
-
-
-
-
-
-
-
-
-
-@pedidos_bp.route('/pago')
-def pago():
-
-
-    items = session.get(
-        'carrito',
-        []
-    )
-
-
-    if not items:
-
-        return redirect(
-            url_for('carrito.carrito')
-        )
-
-
-
-    entrega = session.get(
-        'entrega',
-        'domicilio_rm'
-    )
-
-
-
-    subtotal = sum(
-
-        i['precio'] * i['cantidad']
-
-        for i in items
-
-    )
-
-
-    envio = _costos(
-        entrega
-    )
-
-
-
-    total = subtotal + envio
-
-
-
-    return render_template(
-
-        'pago_form.html',
-
-        items=items,
-
-        subtotal=subtotal,
-
-        envio=envio,
-
-        total=total,
-
         entrega=entrega
-
     )
 
 
@@ -482,14 +311,15 @@ def pago():
 
 
 
+# ==============================
+# PAGO SIMULADO
+# ==============================
 
-
-
-@pedidos_bp.route('/pago/procesar', methods=['POST'])
+@pedidos_bp.route('/pago/procesar',methods=['POST'])
 def pago_procesar():
 
 
-    items = session.get(
+    items=session.get(
         'carrito',
         []
     )
@@ -503,59 +333,25 @@ def pago_procesar():
 
 
 
-    entrega = session.get(
-        'entrega',
-        'domicilio_rm'
-    )
-
-
-
-    subtotal = sum(
-
-        i['precio'] * i['cantidad']
-
+    total=sum(
+        i['precio']*i['cantidad']
         for i in items
-
     )
-
-
-
-    envio = _costos(
-        entrega
-    )
-
-
-    total = subtotal + envio
-
 
 
 
     try:
 
 
-        cliente_nombre = session.get(
-            'usuario',
-            ''
-        )
+        pedido=Pedido(
 
+            cliente=session.get('usuario',''),
 
+            cliente_email=session.get(
+                'datos_envio',
+                {}
+            ).get('email',''),
 
-        cliente_email = session.get(
-            'datos_envio',
-            {}
-        ).get(
-            'email',
-            ''
-        )
-
-
-
-
-        nuevo_pedido = Pedido(
-
-            cliente=cliente_nombre,
-
-            cliente_email=cliente_email,
 
             total=total,
 
@@ -571,41 +367,32 @@ def pago_procesar():
 
 
 
-        db.session.add(
-            nuevo_pedido
-        )
+        db.session.add(pedido)
 
 
-
-
-
-        # DESCONTAR STOCK
 
         for item in items:
 
 
-            producto = db.session.get(
+            producto=db.session.get(
 
                 Producto,
 
-                item.get('id_producto')
+                item['id_producto']
 
             )
 
 
             if producto:
 
-
                 producto.stock -= item['cantidad']
 
 
                 if producto.stock <= 0:
 
-                    producto.stock = 0
+                    producto.stock=0
 
-                    producto.estado = 'Agotado'
-
-
+                    producto.estado='Agotado'
 
 
 
@@ -613,33 +400,18 @@ def pago_procesar():
 
 
 
-
-        session['carrito'] = []
-
-        session.modified = True
-
-
+        session['carrito']=[]
 
 
         return render_template(
-
             'confirmacion.html',
-
             pedido={
-
-                'id_orden': nuevo_pedido.id,
-
-                'total': total,
-
+                'id_orden':pedido.id_usuario,
+                'total':total,
                 'estado':'Pagado'
-
             },
-
             payment_status='approved'
-
         )
-
-
 
 
 
@@ -649,13 +421,9 @@ def pago_procesar():
         db.session.rollback()
 
 
-
         return render_template(
-
             'pago_error.html',
-
             error=str(e)
-
         ),500
 
 
@@ -663,51 +431,38 @@ def pago_procesar():
 
 
 
+# ==============================
+# HISTORIAL
+# ==============================
 
 @pedidos_bp.route('/historial')
 def historial():
 
 
-    if 'usuario' not in session:
-
-        return redirect(
-            url_for('auth.login')
-        )
-
-
-
-    pedidos = Pedido.query.order_by(
-        Pedido.id.desc()
+    pedidos=Pedido.query.order_by(
+        Pedido.id_usuario.desc()
     ).all()
 
 
 
-    filas = [
+    filas=[{
 
-        {
+        'id_orden':p.id_usuario,
 
-            'id_orden': p.id,
+        'total':p.total,
 
-            'total': p.total,
+        'estado':p.estado,
 
-            'estado': p.estado,
+        'codigo_transaccion':
+        p.mp_payment_id or '—'
 
-            'codigo_transaccion': p.mp_payment_id or '—'
-
-        }
-
-        for p in pedidos
-
-    ]
+    } for p in pedidos]
 
 
 
     return render_template(
-
         'historial.html',
-
         pedidos=filas
-
     )
 
 
@@ -715,12 +470,15 @@ def historial():
 
 
 
+# ==============================
+# DETALLE
+# ==============================
 
 @pedidos_bp.route('/pedido/<int:id>')
 def detalle_pedido(id):
 
 
-    pedido = db.session.get(
+    pedido=db.session.get(
         Pedido,
         id
     )
@@ -730,12 +488,11 @@ def detalle_pedido(id):
     if not pedido:
 
         from flask import abort
-
         abort(404)
 
 
 
-    items = json.loads(
+    items=json.loads(
         pedido.items_json
     ) if pedido.items_json else []
 
@@ -747,13 +504,17 @@ def detalle_pedido(id):
 
         pedido={
 
-            'id_orden': pedido.id,
+            'id_orden':
+            pedido.id_usuario,
 
-            'total': pedido.total,
+            'total':
+            pedido.total,
 
-            'estado': pedido.estado,
+            'estado':
+            pedido.estado,
 
-            'lineas': items
+            'lineas':
+            items
 
         }
 
