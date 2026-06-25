@@ -15,7 +15,7 @@ def create_app():
     from routes.pedidos import pedidos_bp
     from routes.admin import admin_bp
     from routes.vendedor import vendedor_bp
-    from routes.mercado_pago import mp_bp
+    from routes.mp import mp_bp
     from routes.api import api_bp
 
     app.register_blueprint(auth_bp)
