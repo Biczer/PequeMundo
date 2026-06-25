@@ -1,4 +1,5 @@
 def create_app():
+    print("APP INICIADA")
     app = Flask(__name__)
     app.config.from_object(Config)
 
