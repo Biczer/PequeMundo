@@ -6,7 +6,7 @@ class Pedido(db.Model):
     __tablename__ = 'pedido'
 
 
-    id = db.Column(
+    id_usuario = db.Column(
         db.Integer,
         primary_key=True
     )
