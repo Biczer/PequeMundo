@@ -91,8 +91,8 @@ def create_app():
         return {
             "productos": [p.id for p in productos]
         }
-    @app.route("/catalogo")
-    def catalogo():
+   @app.route("/catalogo")
+   def catalogo():
     try:
         productos = db.session.execute(text("SELECT * FROM producto")).fetchall()
         return {"productos": [dict(p._mapping) for p in productos]}
