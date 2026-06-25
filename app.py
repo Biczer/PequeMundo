@@ -27,7 +27,7 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(vendedor_bp)
     app.register_blueprint(mp_bp)
-    app.register_blueprint(api_bp)
+    
 
     print("✅ APP INICIADA CORRECTAMENTE")
 
