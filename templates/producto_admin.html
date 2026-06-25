@@ -24,7 +24,7 @@
       <tbody>
         {% for p in producto %}
         <tr>
-          <td class="ps-3 text-muted">#{{ p.id }}</td>
+          <td class="ps-3 text-muted">#{{ p.id_productos }}</td>
           <td class="fw-medium">{{ p.nombre }}</td>
           <td><span class="badge bg-light text-dark border">{{ p.categoria }}</span></td>
           <td>${{ "{:,.0f}".format(p.precio) }}</td>
@@ -39,8 +39,8 @@
             {% endif %}
           </td>
           <td>
-            <a href="{{ url_for('admin.editar_producto', id=p.id) }}" class="btn btn-outline-primary btn-sm">Editar</a>
-            <form action="{{ url_for('admin.eliminar_producto', id=p.id) }}" method="POST" class="d-inline"
+            <a href="{{ url_for('admin.editar_producto', id=p.id_productos) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+            <form action="{{ url_for('admin.eliminar_producto', id=p.id_productos) }}" method="POST" class="d-inline"
                   onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
               <button class="btn btn-outline-danger btn-sm">Eliminar</button>
             </form>
