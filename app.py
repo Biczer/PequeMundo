@@ -1,3 +1,18 @@
+import os
+import json
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
+
+db = SQLAlchemy()
+
+
+class Config:
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")  # Supabase Postgres URL
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+
 def create_app():
     print("APP INICIADA")
 
@@ -5,6 +20,16 @@ def create_app():
     app.config.from_object(Config)
 
     db.init_app(app)
+
+    
+    from auth import auth_bp
+    from publico import publico_bp
+    from carrito import carrito_bp
+    from pedidos import pedidos_bp
+    from admin import admin_bp
+    from vendedor import vendedor_bp
+    from mercado_pago import mp_bp
+    from api import api_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(publico_bp)
@@ -15,12 +40,12 @@ def create_app():
     app.register_blueprint(mp_bp)
     app.register_blueprint(api_bp)
 
+   
     @app.route("/env")
     def env():
         return os.getenv("TEST", "NO")
 
-    from sqlalchemy import text
-
+    
     @app.route("/testdb")
     def testdb():
         try:
@@ -29,6 +54,7 @@ def create_app():
         except Exception as e:
             return str(e)
 
+   
     @app.template_filter('from_json')
     def from_json_filter(value):
         try:
@@ -36,9 +62,25 @@ def create_app():
         except Exception:
             return []
 
+    
     @app.route("/ping")
     def ping():
         return "PONG"
+
+    @app.route("/debug-db")
+    def debug_db():
+        from models import Producto 
+        productos = Producto.query.all()
+        return {"count": len(productos)}
+
+    
+    @app.route("/")
+    def home():
+        from models import Producto  
+        productos = Producto.query.all()
+        return {
+            "productos": [p.id for p in productos]
+        }
 
     print("RUTAS CARGADAS")
     return app
