@@ -23,7 +23,7 @@
       <tbody>
         {% for u in usuarios %}
         <tr>
-          <td class="ps-3 text-muted">#{{ u.id }}</td>
+          <td class="ps-3 text-muted">#{{ u.id_productos }}</td>
           <td class="fw-medium">{{ u.nombre }}</td>
           <td class="text-muted">{{ u.email }}</td>
           <td class="text-muted">{{ u.telefono or '—' }}</td>
@@ -37,7 +37,7 @@
             {% endif %}
           </td>
           <td>
-            <form action="{{ url_for('admin.actualizar_rol', id=u.id) }}" method="POST" class="d-flex gap-2 align-items-center">
+            <form action="{{ url_for('admin.actualizar_rol', id=u.id_productos) }}" method="POST" class="d-flex gap-2 align-items-center">
               <select name="rol" class="form-select form-select-sm" style="width:120px;">
                 <option {% if u.rol == 'Admin' %}selected{% endif %}>Admin</option>
                 <option {% if u.rol == 'Vendedor' %}selected{% endif %}>Vendedor</option>
