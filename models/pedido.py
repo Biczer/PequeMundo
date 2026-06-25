@@ -3,7 +3,7 @@ from extensions import db
 class Pedido(db.Model):
     __tablename__ = 'pedido'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id_usuario = db.Column(db.Integer, primary_key=True)
     cliente = db.Column(db.String(100), nullable=False)
     cliente_email = db.Column(db.String(100), nullable=True)
     total = db.Column(db.Float, nullable=False)
