@@ -46,8 +46,8 @@
             {% endif %}
           </td>
           <td>
-            <a href="{{ url_for('admin.editar_producto', id=p.id) }}" class="btn btn-outline-primary btn-sm">Editar</a>
-            <form action="{{ url_for('admin.eliminar_producto', id=p.id) }}" method="POST" class="d-inline"
+            <a href="{{ url_for('admin.editar_producto', id=p.id_producto) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+            <form action="{{ url_for('admin.eliminar_producto', id=p.id_producto) }}" method="POST" class="d-inline"
                   onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
               <button class="btn btn-outline-danger btn-sm">Eliminar</button>
             </form>
