@@ -1,12 +1,12 @@
 {% extends "admin_base.html" %}
-{% block titulo %}Productos{% endblock %}
-{% block topbar_titulo %}Gestión de Productos{% endblock %}
+{% block titulo %}producto{% endblock %}
+{% block topbar_titulo %}Gestión de producto{% endblock %}
 
 {% block contenido %}
 
 <div class="card border-0 shadow-sm">
   <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-    <h5 class="mb-0">Lista de productos</h5>
+    <h5 class="mb-0">Lista de producto</h5>
     <a href="{{ url_for('admin.agregar_producto') }}" class="btn btn-success btn-sm">+ Agregar Producto</a>
   </div>
   <div class="card-body p-0">
@@ -23,7 +23,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for p in productos %}
+        {% for p in producto %}
         <tr>
           <td class="ps-3 text-muted">#{{ p.id }}</td>
           <td class="fw-medium">{{ p.nombre }}</td>
@@ -54,7 +54,7 @@
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="7" class="text-center text-muted py-4">No hay productos registrados.</td></tr>
+        <tr><td colspan="7" class="text-center text-muted py-4">No hay producto registrados.</td></tr>
         {% endfor %}
       </tbody>
     </table>
