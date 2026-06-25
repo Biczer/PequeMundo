@@ -31,7 +31,7 @@ function cerrarModal() {
 function confirmarCarrito() {
   cerrarModal();
   // Agrega la cantidad correcta haciendo múltiples llamadas si cantidad > 1
-  const id = producto.id;
+  const id = producto.id_producto;
   // Primera vez: redirigir a agregar (añade 1 unidad)
   // Para cantidad > 1, necesitamos múltiples llamadas o un endpoint directo
   if (cantidad === 1) {
