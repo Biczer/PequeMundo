@@ -11,35 +11,51 @@ if not MP_ACCESS_TOKEN:
     )
 
 
-sdk = mercadopago.SDK(str(MP_ACCESS_TOKEN))
+sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
+
 
 
 def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base_url):
 
+
     mp_items = []
+
 
     for i in items_list:
 
         mp_items.append({
-            "id": str(i["id_producto"]),
-            "title": i["nombre"],
-            "quantity": int(i["cantidad"]),
-            "unit_price": int(i["precio"]),
+
+            "id": str(i.get("id_producto")),
+
+            "title": i.get("nombre"),
+
+            "quantity": int(i.get("cantidad", 1)),
+
+            "unit_price": int(i.get("precio", 0)),
+
             "currency_id": "CLP"
+
         })
+
 
 
     preference_data = {
 
+
         "items": mp_items,
 
+
         "payer": {
+
             "name": cliente_nombre,
+
             "email": cliente_email or ""
+
         },
 
 
         "back_urls": {
+
 
             "success": f"{base_url}/mp/success",
 
@@ -50,18 +66,16 @@ def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base
         },
 
 
-        "notification_url":
-            f"{base_url}/mp/webhook",
+        "notification_url": f"{base_url}/mp/webhook",
 
 
-        "external_reference":
-            str(pedido_id),
+        "external_reference": str(pedido_id),
 
 
-        "auto_return":
-            "approved"
+        "auto_return": "approved"
 
     }
+
 
 
     response = sdk.preference().create(
@@ -76,11 +90,14 @@ def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base
 
 
 
+
 def obtener_pago(payment_id):
+
 
     response = sdk.payment().get(
         payment_id
     )
+
 
     return response.get(
         "response",
