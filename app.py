@@ -37,5 +37,5 @@ def create_app():
     def ping():
         
     return "PONG"
-    
+    print("RUTAS CARGADAS")
     return app
