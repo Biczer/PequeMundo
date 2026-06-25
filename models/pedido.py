@@ -39,7 +39,7 @@ class Pedido(db.Model):
 
     vendedor_id = db.Column(
         db.Integer,
-        db.ForeignKey('usuarios.id_usuario'),
+        db.ForeignKey('usuario.id_usuario'),
         nullable=True
     )
 
