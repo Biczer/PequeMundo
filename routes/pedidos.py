@@ -61,8 +61,8 @@ def checkout_json():
 
 
     usuario = db.session.get(
-        Usuario,
-        session['usuario_id']
+        Usuarios,
+        session['id_usuario']
     )
 
 
