@@ -28,7 +28,7 @@
     <tbody>
       {% for p in pedidos|reverse %}
       <tr>
-        <td style="font-family:monospace;font-size:0.78rem;color:#6b7280;">#{{ p.id }}</td>
+        <td style="font-family:monospace;font-size:0.78rem;color:#6b7280;">#{{ p.id_productos }}</td>
         <td style="font-weight:600;">{{ p.cliente }}</td>
         <td style="color:#6b7280;font-size:0.8rem;">{{ p.cliente_email or '—' }}</td>
         <td style="font-weight:700;">${{ "{:,.0f}".format(p.total) }}</td>
