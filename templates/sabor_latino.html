@@ -102,7 +102,7 @@
             {% if p.stock > 0 %}
               <p class="stock">● En stock ({{ p.stock }} disponibles)</p>
               <button type="button"
-                onclick="agregarAlCarrito('{{ p.id }}', '{{ p.nombre | replace("'", "\\'") }}', {{ p.precio }}, {{ p.stock }})">
+                onclick="agregarAlCarrito('{{ p.id_productos }}', '{{ p.nombre | replace("'", "\\'") }}', {{ p.precio }}, {{ p.stock }})">
                 🛒 Agregar al carrito
               </button>
             {% else %}
