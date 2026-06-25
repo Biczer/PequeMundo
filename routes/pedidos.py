@@ -29,7 +29,7 @@ def checkout_json():
     usuario = db.session.get(Usuario, session['usuario_id'])
     total = sum(i['precio'] * i['cantidad'] for i in items)
     for item in items:
-        producto = db.session.get(Producto, item['id'])
+        producto = db.session.get(Producto, item['id_producto'])
         if not producto or producto.stock < item['cantidad']:
             return jsonify({'error': f"Stock insuficiente para {item['nombre']}"}), 400
     nuevo_pedido = Pedido(
