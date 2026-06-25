@@ -14,12 +14,22 @@ class Config:
 
 
 def create_app():
-    print("APP INICIADA")
-
     app = Flask(__name__)
+
     app.config.from_object(Config)
 
+   
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+        "connect_args": {
+            "sslmode": "require"
+        }
+    }
+
     db.init_app(app)
+
+    # resto de tu código...
 
     
     from auth import auth_bp
