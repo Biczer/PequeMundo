@@ -34,7 +34,7 @@
                 style="flex:1;padding:0.6rem 0.9rem;border:1px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;outline:none;">
                 <option value="">— Seleccionar producto —</option>
                 {% for p in producto %}
-                <option value="{{ p.id_productos}}"
+                <option value="{{ p.id_productos_productos}}"
                   data-nombre="{{ p.nombre }}"
                   data-precio="{{ p.precio|int }}"
                   data-stock="{{ p.stock }}">
@@ -158,7 +158,7 @@
     const stock = parseInt(opt.dataset.stock);
 
     // Verificar si ya está en la lista
-    const existing = items.find(i => i.id_productos === id);
+    const existing = items.find(i => i.id_productos_productos === id);
     const cantidadTotal = (existing ? existing.cantidad : 0) + cant;
 
     if (cantidadTotal > stock) {
@@ -176,7 +176,7 @@
   }
 
   function quitarItem(id) {
-    items = items.filter(i => i.id_productos !== id);
+    items = items.filter(i => i.id_productos_productos !== id);
     renderItems();
   }
 
@@ -213,7 +213,7 @@
             <div style="font-size:0.75rem;color:#6b7280;">$${item.precio.toLocaleString('es-CL')} × ${item.cantidad}</div>
           </div>
           <div style="font-weight:700;color:#111827;font-size:0.9rem;">$${subtotal.toLocaleString('es-CL')}</div>
-          <button type="button" onclick="quitarItem(${item.id_productos})"
+          <button type="button" onclick="quitarItem(${item.id_productos_productos})"
             style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:1rem;padding:0.2rem 0.4rem;border-radius:4px;">✕</button>
         </div>
       `;
