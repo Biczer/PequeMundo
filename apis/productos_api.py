@@ -3,13 +3,13 @@ from models.producto import Producto
 
 
 producto_api_bp = Blueprint(
-    "productos_api",
+    "producto_api",
     __name__
 )
 
 
-@producto_api_bp.route("/api/productos")
-def listar_productos():
+@producto_api_bp.route("/api/producto")
+def listar_producto():
 
     categoria = request.args.get("categoria", "").strip()
 
@@ -22,7 +22,7 @@ def listar_productos():
             Producto.categoria == categoria
         )
 
-    productos = query.order_by(
+    producto = query.order_by(
         Producto.id_producto
     ).all()
 
@@ -37,12 +37,12 @@ def listar_productos():
             "stock": p.stock,
             "estado": p.estado
         }
-        for p in productos
+        for p in producto
     ])
 
 
 
-@producto_api_bp.route("/api/productos/<int:id_producto>")
+@producto_api_bp.route("/api/producto/<int:id_producto>")
 def obtener_producto(id_producto):
 
     producto = Producto.query.get(id_producto)
