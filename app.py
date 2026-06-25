@@ -33,5 +33,9 @@ def create_app():
             return json.loads(value)
         except Exception:
             return []
-
+    @app.route("/ping")
+    def ping():
+        
+    return "PONG"
+    
     return app
