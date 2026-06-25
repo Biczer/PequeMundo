@@ -2,55 +2,40 @@ import os
 import mercadopago
 
 
-MP_ACCESS_TOKEN = os.environ.get(
-    'MP_ACCESS_TOKEN',
-    'TEST-7405494608123272-053123-046e81571c23bf9c73efb64662b94c28-585535158'
-)
+MP_ACCESS_TOKEN = os.environ.get("MP_ACCESS_TOKEN")
 
 
-sdk = mercadopago.SDK(
-    MP_ACCESS_TOKEN
-)
+if not MP_ACCESS_TOKEN:
+    raise Exception(
+        "Falta configurar MP_ACCESS_TOKEN en variables de entorno"
+    )
 
+
+sdk = mercadopago.SDK(str(MP_ACCESS_TOKEN))
 
 
 def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base_url):
 
+    mp_items = []
 
-    mp_items = [
+    for i in items_list:
 
-        {
-
-            "id": str(i['id_producto']),
-
-            "title": i['nombre'],
-
-            "quantity": int(i['cantidad']),
-
-            "unit_price": int(i['precio']),
-
+        mp_items.append({
+            "id": str(i["id_producto"]),
+            "title": i["nombre"],
+            "quantity": int(i["cantidad"]),
+            "unit_price": int(i["precio"]),
             "currency_id": "CLP"
-
-        }
-
-        for i in items_list
-
-    ]
-
+        })
 
 
     preference_data = {
 
-
         "items": mp_items,
 
-
         "payer": {
-
             "name": cliente_nombre,
-
             "email": cliente_email or ""
-
         },
 
 
@@ -65,16 +50,18 @@ def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base
         },
 
 
-        "notification_url": f"{base_url}/mp/webhook",
+        "notification_url":
+            f"{base_url}/mp/webhook",
 
 
-        "external_reference": str(pedido_id),
+        "external_reference":
+            str(pedido_id),
 
 
-        "auto_return": "approved"
+        "auto_return":
+            "approved"
 
     }
-
 
 
     response = sdk.preference().create(
@@ -89,14 +76,11 @@ def crear_preferencia(items_list, cliente_nombre, cliente_email, pedido_id, base
 
 
 
-
 def obtener_pago(payment_id):
-
 
     response = sdk.payment().get(
         payment_id
     )
-
 
     return response.get(
         "response",
