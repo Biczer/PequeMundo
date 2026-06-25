@@ -6,8 +6,8 @@ from database.conexion import get_connection
 app = Flask(__name__)
 
 
-@app.get("/api/productos")
-def listar_productos():
+@app.get("/api/producto")
+def listar_producto():
     categoria = request.args.get("categoria", "").strip()
     try:
         conn = get_connection()
@@ -19,15 +19,15 @@ def listar_productos():
             )
         else:
             cursor.execute("SELECT * FROM producto WHERE estado = 'Activo' ORDER BY id_producto")
-        productos = cursor.fetchall()
+        producto = cursor.fetchall()
         cursor.close()
         conn.close()
-        return jsonify(productos)
+        return jsonify(producto)
     except mysql.connector.Error as e:
         return jsonify({"error": "Error de base de datos", "detalle": str(e)}), 500
 
 
-@app.get("/api/productos/<int:id>")
+@app.get("/api/producto/<int:id>")
 def obtener_producto(id):
     try:
         conn = get_connection()
@@ -61,5 +61,5 @@ def listar_categorias():
 
 if __name__ == "__main__":
     port = int(os.environ.get("API_PORT", 5002))
-    print(f"[productos_api] Corriendo en http://localhost:{port}")
+    print(f"[producto_api] Corriendo en http://localhost:{port}")
     app.run(debug=True, port=port)
