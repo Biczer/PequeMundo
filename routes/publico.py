@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request
 from sqlalchemy import text
 from extensions import db
 from models import Producto
-from services.sabor_latino_service import obtener_productos, normalizar_producto
+from services.sabor_latino_service import obtener_producto, normalizar_producto
 
 publico_bp = Blueprint('publico', __name__)
 
@@ -16,24 +16,24 @@ def inicio():
 def catalogo():
     categoria = request.args.get('categoria', None)
     if categoria:
-        productos = Producto.query.filter_by(categoria=categoria, estado='Activo').all()
+        producto = Producto.query.filter_by(categoria=categoria, estado='Activo').all()
     else:
-        productos = Producto.query.filter_by(estado='Activo').all()
-    return render_template('catalogo.html', productos=productos)
+        producto = Producto.query.filter_by(estado='Activo').all()
+    return render_template('catalogo.html', producto=producto)
 
 
 @publico_bp.route('/socios/sabor-latino')
 def sabor_latino():
     try:
-        productos = [normalizar_producto(p) for p in obtener_productos()]
-        categorias = sorted(set(p['categoria'] for p in productos))
+        producto = [normalizar_producto(p) for p in obtener_producto()]
+        categorias = sorted(set(p['categoria'] for p in producto))
         error = None
     except Exception as e:
-        productos = []
+        producto = []
         categorias = []
         error = str(e)
     return render_template('sabor_latino.html',
-                           productos=productos,
+                           producto=producto,
                            categorias=categorias,
                            error=error)
 
