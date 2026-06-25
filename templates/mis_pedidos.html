@@ -141,7 +141,7 @@
         {% if p.items_json %}
           {% set items = p.items_json | tojson %}
           <div class="pedido-items">
-            <strong style="display:block;margin-bottom:0.5rem;font-size:1.2rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;">Productos</strong>
+            <strong style="display:block;margin-bottom:0.5rem;font-size:1.2rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;">producto</strong>
             {% set parsed = p.items_json | from_json %}
             {% if parsed %}
               {% for item in parsed %}
