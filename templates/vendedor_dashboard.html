@@ -119,11 +119,11 @@
   <div class="col-lg-5">
     <div class="v-card">
       <div class="v-card-header">
-        <span class="v-card-title">Productos disponibles</span>
+        <span class="v-card-title">producto disponibles</span>
         <a href="{{ url_for('vendedor.vendedor_catalogo') }}" class="v-btn v-btn-outline v-btn-sm">Ver todos</a>
       </div>
       <div style="padding:0.5rem 0;">
-        {% for p in productos[:6] %}
+        {% for p in producto[:6] %}
         <div style="display:flex;align-items:center;gap:0.8rem;padding:0.7rem 1.2rem;border-bottom:1px solid #f3f4f6;">
           <div style="flex:1;min-width:0;">
             <div style="font-weight:600;font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ p.nombre }}</div>
@@ -132,7 +132,7 @@
           <div style="font-weight:700;color:#4f7df3;font-size:0.85rem;white-space:nowrap;">${{ "{:,.0f}".format(p.precio) }}</div>
         </div>
         {% else %}
-        <div style="text-align:center;padding:2rem;color:#9ca3af;">Sin productos activos</div>
+        <div style="text-align:center;padding:2rem;color:#9ca3af;">Sin producto activos</div>
         {% endfor %}
       </div>
     </div>
