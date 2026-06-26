@@ -90,7 +90,7 @@
                   <td class="history-monto">${{ "{:,.0f}".format(item.precio) }}</td>
                   <td>
                     <div class="cart-qty">
-                      <a href="/carrito/disminuir/{{ item.id }}" class="cart-qty-btn">−</a>
+                      <a href="/carrito/disminuir/{{ item.id_producto }}" class="cart-qty-btn">−</a>
                       <span class="cart-qty-num">{{ item.cantidad }}</span>
                       <a href="/carrito/aumentar/{{ item.id }}" class="cart-qty-btn">+</a>
                     </div>
