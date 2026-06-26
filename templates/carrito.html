@@ -1,197 +1,713 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<meta charset="UTF-8">
 
-  <title>Carrito - Peque Mundo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<title>Carrito - Peque Mundo</title>
+
 </head>
+
 
 <body>
 
-  <header class="home-header">
-    <a href="/" class="home-brand">
-      <img
-        src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}"
-        alt="Peque Mundo"
-        class="home-logo"
-      >
-    </a>
 
-    <nav class="home-nav">
-      <a href="/">Inicio</a>
-      <a href="/catalogo">Catálogo</a>
-      <a href="/#ofertas">Ofertas</a>
-      <a href="/#nosotros">Nosotros</a>
-    </nav>
+<header class="home-header">
 
-    <div class="home-actions">
-      {% if session.get('usuario') %}
-        <div class="nav-user-menu">
-          <button class="nav-btn {% if session.get('rol') == 'Admin' %}nav-btn--admin{% else %}nav-btn--user{% endif %}" onclick="toggleUserMenu()">
-            {% if session.get('rol') == 'Admin' %}Admin{% else %}{{ session.get('usuario') }}{% endif %}
-            <span class="nav-chevron">▾</span>
-          </button>
-          <div class="nav-dropdown" id="navDropdown">
-            {% if session.get('rol') == 'Admin' %}
-              <a href="{{ url_for('admin.dashboard') }}" class="nav-dropdown-item">Panel admin</a>
-            {% else %}
-              <a href="{{ url_for('pedidos.historial') }}" class="nav-dropdown-item">Mis pedidos</a>
-            {% endif %}
-            <a href="{{ url_for('auth.cerrar_sesion') }}" class="nav-dropdown-item nav-dropdown-item--danger">Cerrar sesión</a>
-          </div>
-        </div>
-      {% else %}
-        <a href="{{ url_for('auth.login') }}" class="nav-btn nav-btn--login">Iniciar sesión</a>
-      {% endif %}
-      <a href="{{ url_for('carrito.carrito') }}" class="nav-cart" aria-label="Carrito de compras">🛒</a>
-    </div>
-  </header>
 
-  <main class="catalog-main">
+<a href="/" class="home-brand">
 
-    <div class="catalog-page-heading">
-      <span class="hero-label">Mi compra</span>
-      <h1>Carrito de compras</h1>
-      <p>Revisa los producto que seleccionaste antes de pagar.</p>
-    </div>
+<img
+src="{{ url_for('static', filename='img/Logo_pequemundo.png') }}"
+class="home-logo"
+alt="Peque Mundo">
 
-    {% if items %}
+</a>
 
-      <div class="cart-layout">
 
-        <section class="cart-products">
 
-          <div class="history-table-wrapper">
-            <table class="history-table cart-table">
-              <thead>
-                <tr>
-                  <th>Producto</th>
-                  <th>Valor unitario</th>
-                  <th>Cantidad</th>
-                  <th>Total</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for item in items %}
-                <tr>
-                  <td class="cart-product-cell">
-                    <img
-                      src="{{ url_for('static', filename='img/' + item.imagen) }}"
-                      alt="{{ item.nombre }}"
-                      class="cart-product-img"
-                    >
-                    <span class="cart-product-name">{{ item.nombre }}</span>
-                  </td>
-                  <td class="history-monto">${{ "{:,.0f}".format(item.precio) }}</td>
-                  <td>
-                    <div class="cart-qty">
-                      <a href="/carrito/disminuir/{{ item.id_producto }}" class="cart-qty-btn">−</a>
-                      <span class="cart-qty-num">{{ item.cantidad }}</span>
-                      <a href="/carrito/aumentar/{{ item.id }}" class="cart-qty-btn">+</a>
-                    </div>
-                  </td>
-                  <td class="history-monto">${{ "{:,.0f}".format(item.precio * item.cantidad) }}</td>
-                  <td>
-                    <a href="/carrito/eliminar/{{ item.id }}" class="cart-remove-btn" title="Eliminar producto">✕</a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
+<nav class="home-nav">
 
-          <div class="cart-actions-bar">
-            <a href="/catalogo" class="secondary-button">← Seguir comprando</a>
-            <a href="/carrito/vaciar" class="cart-clear-btn">Eliminar todos los producto</a>
-          </div>
+<a href="/">Inicio</a>
 
-        </section>
+<a href="/catalogo">Catálogo</a>
 
-        <aside class="cart-summary">
+<a href="/#ofertas">Ofertas</a>
 
-          <h2 class="cart-summary-title">Resumen del pedido</h2>
+<a href="/#nosotros">Nosotros</a>
 
-          <div class="cart-summary-row">
-            <span>Subtotal</span>
-            <span>${{ "{:,.0f}".format(subtotal) }}</span>
-          </div>
+</nav>
 
-          <div class="cart-summary-divider"></div>
 
-          <p class="cart-delivery-label">Tipo de entrega</p>
 
-          <div class="cart-delivery-options">
-            <label class="cart-delivery-option">
-              <input type="radio" name="entrega" value="domicilio_rm"
-                {% if entrega == 'domicilio_rm' %}checked{% endif %}
-                onchange="window.location='/carrito/entrega/domicilio_rm'">
-              <span>Despacho Región Metropolitana</span>
-              <span class="cart-delivery-price">${{ "{:,.0f}".format(costo_rm) }}</span>
-            </label>
 
-            <label class="cart-delivery-option">
-              <input type="radio" name="entrega" value="domicilio_region"
-                {% if entrega == 'domicilio_region' %}checked{% endif %}
-                onchange="window.location='/carrito/entrega/domicilio_region'">
-              <span>Despacho otras regiones</span>
-              <span class="cart-delivery-price">${{ "{:,.0f}".format(costo_region) }}</span>
-            </label>
+<div class="home-actions">
 
-            <label class="cart-delivery-option">
-              <input type="radio" name="entrega" value="retiro"
-                {% if entrega == 'retiro' %}checked{% endif %}
-                onchange="window.location='/carrito/entrega/retiro'">
-              <span>Retiro en tienda</span>
-              <span class="cart-delivery-price cart-delivery-free">Gratis</span>
-            </label>
-          </div>
 
-          <div class="cart-summary-divider"></div>
+{% if session.get('usuario') %}
 
-          <div class="cart-summary-row cart-summary-total">
-            <span>Total</span>
-            <span>${{ "{:,.0f}".format(total) }}</span>
-          </div>
 
-          <a href="/checkout" class="primary-button cart-checkout-btn">Ir a pagar →</a>
+<div class="nav-user-menu">
 
-        </aside>
 
-      </div>
+<button class="nav-btn"
+onclick="toggleUserMenu()">
 
-    {% else %}
+{{ session.get('usuario') }}
 
-      <div class="orders-empty">
-        <span class="orders-empty-icon">🛒</span>
-        <h2>Tu carrito está vacío</h2>
-        <p>Agrega producto desde el catálogo para comenzar tu compra.</p>
-        <a href="/catalogo" class="primary-button orders-empty-btn">Ver catálogo</a>
-      </div>
+</button>
 
-    {% endif %}
 
-  </main>
 
-  <footer class="home-footer">
-    <div>
-      <h3>Peque Mundo</h3>
-      <p>Muebles infantiles para espacios únicos.</p>
-    </div>
+<div class="nav-dropdown" id="navDropdown">
 
-    <div class="footer-links">
-      <a href="/">Inicio</a>
-      <a href="/catalogo">Catálogo</a>
-      <a href="/login">Iniciar sesión</a>
-      <a href="/registro">Registrarse</a>
-    </div>
-  </footer>
 
-  <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+<a href="{{ url_for('pedidos.historial') }}">
+
+Mis pedidos
+
+</a>
+
+
+<a href="{{ url_for('auth.cerrar_sesion') }}">
+
+Cerrar sesión
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+{% else %}
+
+
+<a href="{{ url_for('auth.login') }}"
+class="nav-btn">
+
+Iniciar sesión
+
+</a>
+
+
+
+{% endif %}
+
+
+
+<a href="{{ url_for('carrito.carrito') }}"
+class="nav-cart">
+
+🛒
+
+</a>
+
+
+
+</div>
+
+
+</header>
+
+
+
+
+
+<main class="catalog-main">
+
+
+
+<div class="catalog-page-heading">
+
+
+<span class="hero-label">
+
+Mi compra
+
+</span>
+
+
+<h1>
+
+Carrito de compras
+
+</h1>
+
+
+<p>
+
+Revisa tus productos antes de pagar.
+
+</p>
+
+
+
+</div>
+
+
+
+
+
+
+{% if items %}
+
+
+
+<div class="cart-layout">
+
+
+
+<section class="cart-products">
+
+
+
+
+
+<table class="history-table cart-table">
+
+
+<thead>
+
+
+<tr>
+
+<th>
+Producto
+</th>
+
+
+<th>
+Precio
+</th>
+
+
+<th>
+Cantidad
+</th>
+
+
+<th>
+Total
+</th>
+
+
+<th>
+
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+
+<tbody>
+
+
+
+{% for item in items %}
+
+
+
+
+<tr>
+
+
+
+<td class="cart-product-cell">
+
+
+
+<img
+
+src="{{ url_for('static', filename='img/' + item.imagen) }}"
+
+class="cart-product-img">
+
+
+
+<span>
+
+{{ item.nombre }}
+
+</span>
+
+
+</td>
+
+
+
+
+
+
+<td>
+
+
+${{ "{:,.0f}".format(item.precio) }}
+
+
+</td>
+
+
+
+
+
+<td>
+
+
+
+<div class="cart-qty">
+
+
+<a
+
+href="/carrito/disminuir/{{ item.id_producto }}"
+
+class="cart-qty-btn">
+
+−
+
+</a>
+
+
+
+
+<span class="cart-qty-num">
+
+{{ item.cantidad }}
+
+</span>
+
+
+
+
+<a
+
+href="/carrito/aumentar/{{ item.id_producto }}"
+
+class="cart-qty-btn">
+
++
+
+</a>
+
+
+
+</div>
+
+
+
+</td>
+
+
+
+
+
+
+<td>
+
+
+${{ "{:,.0f}".format(item.precio * item.cantidad) }}
+
+
+</td>
+
+
+
+
+
+<td>
+
+
+<a
+
+href="/carrito/eliminar/{{ item.id_producto }}"
+
+class="cart-remove-btn">
+
+✕
+
+</a>
+
+
+
+</td>
+
+
+
+
+
+</tr>
+
+
+
+
+
+
+{% endfor %}
+
+
+
+</tbody>
+
+
+
+</table>
+
+
+
+
+
+
+
+<div class="cart-actions-bar">
+
+
+<a href="/catalogo"
+class="secondary-button">
+
+← Seguir comprando
+
+</a>
+
+
+
+<a href="/carrito/vaciar"
+class="cart-clear-btn">
+
+Vaciar carrito
+
+</a>
+
+
+
+</div>
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<aside class="cart-summary">
+
+
+
+<h2 class="cart-summary-title">
+
+Resumen del pedido
+
+</h2>
+
+
+
+
+
+<div class="cart-summary-row">
+
+
+<span>
+
+Subtotal
+
+</span>
+
+
+<span>
+
+${{ "{:,.0f}".format(subtotal) }}
+
+</span>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="cart-summary-divider"></div>
+
+
+
+
+
+<p>
+
+Tipo de entrega
+
+</p>
+
+
+
+
+
+
+<label>
+
+
+<input
+
+type="radio"
+
+name="entrega"
+
+value="domicilio_rm"
+
+{% if entrega == 'domicilio_rm' %}
+
+checked
+
+{% endif %}
+
+onchange="window.location='/carrito/entrega/domicilio_rm'">
+
+
+Despacho Región Metropolitana
+
+
+</label>
+
+
+
+
+
+<label>
+
+
+<input
+
+type="radio"
+
+name="entrega"
+
+value="domicilio_region"
+
+{% if entrega == 'domicilio_region' %}
+
+checked
+
+{% endif %}
+
+
+onchange="window.location='/carrito/entrega/domicilio_region'">
+
+
+Despacho otras regiones
+
+
+</label>
+
+
+
+
+
+
+<label>
+
+
+<input
+
+type="radio"
+
+name="entrega"
+
+value="retiro"
+
+
+{% if entrega == 'retiro' %}
+
+checked
+
+{% endif %}
+
+
+onchange="window.location='/carrito/entrega/retiro'">
+
+
+Retiro tienda
+
+
+</label>
+
+
+
+
+
+
+
+
+<div class="cart-summary-divider"></div>
+
+
+
+
+
+
+<div class="cart-summary-row cart-summary-total">
+
+
+
+<span>
+
+Total
+
+</span>
+
+
+
+<span>
+
+${{ "{:,.0f}".format(total) }}
+
+</span>
+
+
+
+</div>
+
+
+
+
+
+
+
+<a href="/checkout"
+
+class="primary-button cart-checkout-btn">
+
+Ir a pagar →
+
+</a>
+
+
+
+
+
+</aside>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+{% else %}
+
+
+
+
+<div class="orders-empty">
+
+
+<span class="orders-empty-icon">
+
+🛒
+
+</span>
+
+
+
+<h2>
+
+Tu carrito está vacío
+
+</h2>
+
+
+
+<p>
+
+Agrega productos desde catálogo.
+
+</p>
+
+
+
+<a href="/catalogo"
+class="primary-button">
+
+Ver catálogo
+
+</a>
+
+
+
+</div>
+
+
+
+
+{% endif %}
+
+
+
+
+</main>
+
+
+
+
+
+<footer class="home-footer">
+
+
+<h3>
+
+Peque Mundo
+
+</h3>
+
+
+<p>
+
+Muebles infantiles para espacios únicos.
+
+</p>
+
+
+</footer>
+
+
+
+
+
+<script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+
+
 
 </body>
+
+
 </html>
