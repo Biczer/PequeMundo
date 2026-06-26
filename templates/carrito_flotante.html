@@ -850,12 +850,65 @@ carritoToast(
 
 
 }
-
-
-
 }
 
 
+async function carritoCheckout(){
+
+    if(carrito.length === 0){
+
+        carritoToast("⚠️ Carrito vacío");
+        return;
+
+    }
+
+
+    const res = await fetch('/carrito/checkout', {
+
+        method:'POST',
+
+        headers:{
+            'Content-Type':'application/json'
+        },
+
+        body: JSON.stringify({
+
+            items: carrito.map(item => ({
+
+                id_producto: item.id_producto,
+                nombre: item.nombre,
+                precio: item.precio,
+                cantidad: item.cantidad
+
+            }))
+
+        })
+
+    });
+
+
+    const data = await res.json();
+
+
+    console.log("RESPUESTA CHECKOUT:", data);
+
+
+    if(data.checkout_url){
+
+        localStorage.removeItem('pm_carrito');
+
+        window.location.href = data.checkout_url;
+
+    }else{
+
+        carritoToast(
+        data.error || "Error"
+        );
+
+    }
+
+
+}
 
 
 
