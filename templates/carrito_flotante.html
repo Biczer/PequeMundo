@@ -1,6 +1,8 @@
 {# carrito_flotante.html #}
 
+
 <style>
+
 #carrito-fab{
  position:fixed;
  bottom:2.4rem;
@@ -16,7 +18,9 @@
  font-size:1.5rem;
 }
 
+
 #carrito-count{
+
  position:absolute;
  top:-4px;
  right:-4px;
@@ -29,105 +33,143 @@
  display:none;
  align-items:center;
  justify-content:center;
+
 }
 
+
 #carrito-count.visible{
- display:flex;
+display:flex;
 }
+
 
 
 #carrito-overlay{
- position:fixed;
- inset:0;
- background:rgba(0,0,0,.4);
- z-index:9001;
- display:none;
+
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.4);
+z-index:9001;
+display:none;
+
 }
 
 
 #carrito-overlay.open{
- display:block;
+
+display:block;
+
 }
+
 
 
 #carrito-drawer{
- position:fixed;
- top:0;
- right:-420px;
- width:420px;
- max-width:100%;
- height:100vh;
- background:white;
- z-index:9002;
- transition:.3s;
- display:flex;
- flex-direction:column;
+
+position:fixed;
+top:0;
+right:-420px;
+width:420px;
+max-width:100%;
+height:100vh;
+background:white;
+z-index:9002;
+transition:.3s;
+display:flex;
+flex-direction:column;
+
 }
+
 
 
 #carrito-drawer.open{
- right:0;
+
+right:0;
+
 }
+
 
 
 .cdr-header{
- padding:20px;
- display:flex;
- justify-content:space-between;
- border-bottom:1px solid #ddd;
+
+padding:20px;
+display:flex;
+justify-content:space-between;
+border-bottom:1px solid #ddd;
+
 }
+
 
 
 .cdr-items{
- flex:1;
- overflow:auto;
- padding:20px;
+
+flex:1;
+overflow:auto;
+padding:20px;
+
 }
+
 
 
 .cdr-item{
- display:flex;
- gap:10px;
- align-items:center;
- padding:10px 0;
- border-bottom:1px solid #eee;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 0;
+border-bottom:1px solid #eee;
+
 }
+
 
 
 .cdr-footer{
- padding:20px;
- border-top:1px solid #ddd;
+
+padding:20px;
+border-top:1px solid #ddd;
+
 }
+
 
 
 .cdr-checkout-btn{
- width:100%;
- padding:15px;
- background:#111827;
- color:white;
- border:none;
- border-radius:10px;
- cursor:pointer;
+
+width:100%;
+padding:15px;
+background:#111827;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+
 }
+
 
 
 #cdr-toast{
- position:fixed;
- bottom:80px;
- right:30px;
- background:#111827;
- color:white;
- padding:12px 20px;
- border-radius:10px;
- display:none;
- z-index:9999;
+
+position:fixed;
+bottom:80px;
+right:30px;
+background:#111827;
+color:white;
+padding:12px 20px;
+border-radius:10px;
+display:none;
+z-index:9999;
+
 }
+
+
 
 #cdr-toast.show{
- display:block;
+
+display:block;
+
 }
 
+
 </style>
+
+
 
 
 
@@ -140,7 +182,13 @@
 </button>
 
 
+
+
+
 <div id="carrito-overlay" onclick="carritoCerrar()"></div>
+
+
+
 
 
 <div id="carrito-drawer">
@@ -156,7 +204,10 @@
 
 
 
+
 <div id="cdr-items" class="cdr-items"></div>
+
+
 
 
 
@@ -173,7 +224,9 @@ Total:
 
 
 
+
 {% if session.get('usuario_id') %}
+
 
 <button 
 class="cdr-checkout-btn"
@@ -184,7 +237,9 @@ onclick="carritoCheckout()">
 </button>
 
 
+
 {% else %}
+
 
 <button 
 class="cdr-checkout-btn"
@@ -193,6 +248,8 @@ onclick="location.href='/login'">
 👤 Iniciar sesión
 
 </button>
+
+
 
 {% endif %}
 
@@ -206,13 +263,18 @@ onclick="location.href='/login'">
 
 
 
+
+
 <div id="cdr-toast">
 
 <span id="cdr-toast-text">
+
 Producto agregado
+
 </span>
 
 </div>
+
 
 
 
@@ -222,8 +284,29 @@ Producto agregado
 
 
 let carrito = JSON.parse(
+
 localStorage.getItem('pm_carrito') || '[]'
+
 );
+
+
+
+
+
+function carritoGuardar(){
+
+localStorage.setItem(
+
+'pm_carrito',
+
+JSON.stringify(carrito)
+
+);
+
+}
+
+
+
 
 
 
@@ -234,33 +317,42 @@ precio,
 stock
 ){
 
+
+
 let existe = carrito.find(
-p => p.id_producto === id_producto
+
+p => p.id_producto == id_producto
+
 );
+
+
+
 
 
 if(existe){
 
-    if(existe.cantidad < stock){
 
-        existe.cantidad++;
+if(existe.cantidad < stock){
 
-    }
+existe.cantidad++;
+
+}
+
 
 }else{
 
 
 carrito.push({
 
-    id_producto: id_producto,
+id_producto:id_producto,
 
-    nombre: nombre,
+nombre:nombre,
 
-    precio: Number(precio),
+precio:Number(precio),
 
-    cantidad: 1,
+cantidad:1,
 
-    stock: stock
+stock:Number(stock)
 
 });
 
@@ -268,13 +360,17 @@ carrito.push({
 }
 
 
+
+
 carritoGuardar();
 
 carritoRender();
 
+
 carritoToast(
-"✅ " + nombre + " agregado"
+"✅ "+nombre+" agregado"
 );
+
 
 
 }
@@ -284,7 +380,11 @@ carritoToast(
 
 
 
+
+
+
 function carritoRender(){
+
 
 
 let lista=document.getElementById(
@@ -303,17 +403,28 @@ let total=document.getElementById(
 
 
 
-let cantidad=carrito.reduce(
+
+let cantidad = carrito.reduce(
+
 (a,b)=>a+b.cantidad,
+
 0
+
 );
 
 
 
-let suma=carrito.reduce(
+
+
+let suma = carrito.reduce(
+
 (a,b)=>a+(b.precio*b.cantidad),
+
 0
+
 );
+
+
 
 
 
@@ -321,29 +432,44 @@ count.textContent=cantidad;
 
 
 count.classList.toggle(
+
 'visible',
+
 cantidad>0
+
 );
 
 
 
-total.textContent=
+
+
+total.textContent =
+
 "$"+suma.toLocaleString('es-CL');
+
+
+
+
 
 
 
 if(carrito.length===0){
 
-lista.innerHTML=
-"Carrito vacío";
+
+lista.innerHTML="🛒 Carrito vacío";
 
 return;
+
 
 }
 
 
 
-lista.innerHTML=carrito.map(item=>`
+
+
+
+
+lista.innerHTML = carrito.map(item=>`
 
 
 <div class="cdr-item">
@@ -357,8 +483,8 @@ lista.innerHTML=carrito.map(item=>`
 
 $${item.precio.toLocaleString('es-CL')}
 
-
 </div>
+
 
 
 <div>
@@ -372,9 +498,11 @@ $${item.precio.toLocaleString('es-CL')}
 ${item.cantidad}
 
 
+
 <button onclick="cantidadProducto(${item.id_producto},1)">
 +
 </button>
+
 
 
 <button onclick="eliminarProducto(${item.id_producto})">
@@ -395,7 +523,12 @@ ${item.cantidad}
 
 
 
+
 }
+
+
+
+
 
 
 
@@ -404,25 +537,41 @@ ${item.cantidad}
 function cantidadProducto(id,cambio){
 
 
-let item=carrito.find(
-p=>p.id_producto===id
+
+let item = carrito.find(
+
+p=>p.id_producto == id
+
 );
+
 
 
 if(!item)return;
 
 
-item.cantidad+=cambio;
+
+
+
+item.cantidad += cambio;
+
+
 
 
 
 if(item.cantidad<=0){
 
-carrito=carrito.filter(
-p=>p.id_producto!==id
+
+carrito = carrito.filter(
+
+p=>p.id_producto != id
+
 );
 
+
 }
+
+
+
 
 
 carritoGuardar();
@@ -430,7 +579,9 @@ carritoGuardar();
 carritoRender();
 
 
+
 }
+
 
 
 
@@ -441,9 +592,12 @@ carritoRender();
 function eliminarProducto(id){
 
 
-carrito=carrito.filter(
-p=>p.id_producto!==id
+carrito = carrito.filter(
+
+p=>p.id_producto != id
+
 );
+
 
 
 carritoGuardar();
@@ -451,7 +605,10 @@ carritoGuardar();
 carritoRender();
 
 
+
 }
+
+
 
 
 
@@ -460,65 +617,94 @@ carritoRender();
 
 function carritoAbrir(){
 
+
 document.getElementById(
+
 'carrito-overlay'
+
 ).classList.add('open');
 
 
+
 document.getElementById(
+
 'carrito-drawer'
+
 ).classList.add('open');
 
 
 }
+
+
+
 
 
 
 
 function carritoCerrar(){
 
+
+
 document.getElementById(
+
 'carrito-overlay'
+
 ).classList.remove('open');
 
 
+
 document.getElementById(
+
 'carrito-drawer'
+
 ).classList.remove('open');
 
 
 }
+
+
+
+
+
 
 
 
 
 function carritoToast(msg){
 
-let t=document.getElementById(
+
+let toast=document.getElementById(
+
 'cdr-toast'
+
 );
 
 
-let texto=document.getElementById(
+document.getElementById(
+
 'cdr-toast-text'
-);
+
+).textContent=msg;
 
 
 
-texto.textContent=msg;
+toast.classList.add('show');
 
-
-t.classList.add('show');
 
 
 setTimeout(()=>{
 
-t.classList.remove('show');
+
+toast.classList.remove('show');
+
 
 },2000);
 
 
+
 }
+
+
 
 
 
@@ -529,20 +715,33 @@ t.classList.remove('show');
 async function carritoCheckout(){
 
 
+
 if(carrito.length===0){
 
+
 carritoToast(
-"Carrito vacío"
+"⚠️ Carrito vacío"
 );
 
+
 return;
+
 
 }
 
 
 
-let res=await fetch(
+
+
+
+try{
+
+
+
+let res = await fetch(
+
 '/carrito/checkout',
+
 {
 
 
@@ -556,52 +755,113 @@ headers:{
 },
 
 
-body: JSON.stringify({ 
-  items: carrito.map(item => ({
-    id_producto: item.id,
-    nombre: item.nombre,
-    precio: item.precio,
-    cantidad: item.cantidad
-  }))
+
+body:JSON.stringify({
+
+
+items: carrito.map(item=>({
+
+
+id_producto:item.id_producto,
+
+nombre:item.nombre,
+
+precio:item.precio,
+
+cantidad:item.cantidad
+
+
+}))
+
+
 })
 
 
 
-let data=await res.json();
+}
+
+
+
+);
+
+
+
+
+
+let data = await res.json();
+
+
+
+
+
+console.log(data);
+
+
+
 
 
 
 if(data.checkout_url){
 
 
+
 localStorage.removeItem(
+
 'pm_carrito'
+
 );
 
 
-window.location.href=
-data.checkout_url;
+
+window.location.href=data.checkout_url;
 
 
 
 }else{
 
 
+
 carritoToast(
-data.error || "Error"
+
+"❌ "+(data.error || "Error")
+
 );
 
 
+
 }
 
 
+
+
+
+}catch(error){
+
+
+console.error(error);
+
+
+carritoToast(
+
+"❌ Error de conexión"
+
+);
+
+
+
 }
+
+
+
+}
+
 
 
 
 
 
 carritoRender();
+
 
 
 </script>
