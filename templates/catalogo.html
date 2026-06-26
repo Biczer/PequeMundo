@@ -199,11 +199,9 @@
       const accion = p.stock > 0
         ? `<p class="stock">● En stock (${p.stock} disponibles)</p>
            <button type="button"
-             onclick="agregarAlCarrito(${p.id}, '${nombreEsc}', ${Math.round(p.precio)}, ${p.stock})">
+             onclick="agregarAlCarrito(${p.id_producto}, '${nombreEsc}', ${Math.round(p.precio)}, ${p.stock})">
              🛒 Agregar al carrito
            </button>`
-        : `<p style="color:#ef4444;font-size:1.3rem;margin-bottom:1.4rem;">● Agotado</p>
-           <button type="button" disabled style="opacity:0.5;cursor:not-allowed;">Sin stock</button>`;
 
       return `
         <article class="product-card"
